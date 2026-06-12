@@ -7,7 +7,8 @@
         <p class="section-eyebrow">Get in Touch</p>
         <h2 class="section-title">Let's Work <em>Together!</em></h2>
         <p class="contact-sub">
-          Setiap ide besar membutuhkan eksekusi yang tepat. Mari hubungi saya untuk berkolaborasi dan bersama-sama kita wujudkan konsep kreatif Anda menjadi nyata.
+          Punya proyek desain, konten, atau kolaborasi yang menarik?
+          Jangan ragu untuk menghubungi saya — mari kita wujudkan ide bersama.
         </p>
 
         <div class="contact-links">
@@ -40,16 +41,21 @@
             <label>Email</label>
             <input v-model="form.email" type="email" placeholder="email@kamu.com" />
           </div>
-          
+          <div class="form-group">
+            <label>Subjek</label>
+            <input v-model="form.subject" type="text" placeholder="Kolaborasi / Proyek / Lainnya" />
+          </div>
           <div class="form-group">
             <label>Pesan</label>
             <textarea v-model="form.message" rows="4" placeholder="Ceritakan projekmu..."></textarea>
           </div>
 
-          <button class="btn-send" @click="sendEmail" :disabled="!isValid">
-            <span v-if="!sent">Kirim Pesan</span>
-            <span v-else>Terkirim! 🎉</span>
+          <button class="btn-send" @click="sendEmail" :disabled="!isValid || sending">
+            <span v-if="sending">Mengirim...</span>
+            <span v-else-if="sent">Terkirim! 🎉</span>
+            <span v-else>Kirim Pesan </span>
           </button>
+          <p v-if="error" class="error-msg">Gagal mengirim, coba lagi ya.</p>
         </div>
       </div>
 
@@ -69,22 +75,42 @@ import { ref, computed } from 'vue'
 
 const form = ref({ name: '', email: '', subject: '', message: '' })
 const sent = ref(false)
+const sending = ref(false)
+const error = ref(false)
 
 const isValid = computed(() =>
   form.value.name && form.value.email && form.value.message
 )
 
-function sendEmail() {
+async function sendEmail() {
   if (!isValid.value) return
-  const { name, email, subject, message } = form.value
-  const body = `Halo Syifa,%0A%0ANama: ${name}%0AEmail: ${email}%0A%0A${message}`
-  const mailto = `mailto:adhasyifa53@gmail.com?subject=${encodeURIComponent(subject || 'Pesan dari Portfolio')}&body=${body}`
-  window.open(mailto)
-  sent.value = true
-  setTimeout(() => {
-    sent.value = false
-    form.value = { name: '', email: '', subject: '', message: '' }
-  }, 3000)
+  sending.value = true
+  error.value = false
+
+  try {
+    const res = await fetch('https://formspree.io/f/mqeogzkj', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: form.value.name,
+        email: form.value.email,
+        subject: form.value.subject,
+        message: form.value.message,
+      })
+    })
+
+    if (res.ok) {
+      sent.value = true
+      form.value = { name: '', email: '', subject: '', message: '' }
+      setTimeout(() => sent.value = false, 3000)
+    } else {
+      error.value = true
+    }
+  } catch (e) {
+    error.value = true
+  } finally {
+    sending.value = false
+  }
 }
 
 const contacts = [
@@ -103,7 +129,7 @@ const contacts = [
   {
     platform: 'TikTok',
     label: '@beautifulburrrr',
-    href: 'https://tiktok.com/@beautifulblurrrrr',
+    href: 'https://tiktok.com/@beautifulburrrr',
     icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3.3A4.9 4.9 0 0 1 14.8 0h-3.4v16.4a2.9 2.9 0 0 1-2.9 2.5 2.9 2.9 0 0 1-2.9-2.9 2.9 2.9 0 0 1 2.9-2.9c.3 0 .6 0 .8.1V9.6a6.3 6.3 0 0 0-.8-.1 6.3 6.3 0 0 0-6.3 6.3 6.3 6.3 0 0 0 6.3 6.3 6.3 6.3 0 0 0 6.3-6.3V8.2a8.2 8.2 0 0 0 4.9 1.6V6.5a4.9 4.9 0 0 1-3.1-3.2z"/></svg>`,
   },
   {
@@ -316,6 +342,13 @@ const contacts = [
 .btn-send:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.error-msg {
+  font-size: 0.8rem;
+  color: #e05c5c;
+  text-align: center;
+  margin-top: -0.5rem;
 }
 
 /* ── Footer ── */
