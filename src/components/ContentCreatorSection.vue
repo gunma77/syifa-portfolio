@@ -118,21 +118,21 @@ function togglePlay() {
 const accounts = [
   {
     emoji: '🎓',
-    img: '/images/cc-prodi.jpg',
+    img: '/images/ilkomBKU.jpeg',
     handle: '@ilmukomunikasi.bku',
     platform: 'TikTok — Prodi Ilmu Komunikasi',
     desc: 'Konten edukasi dan dokumentasi kegiatan akademik program studi Ilmu Komunikasi BKU.',
   },
   {
     emoji: '✨',
-    img: '/images/cc-sympnoia.jpg',
+    img: '/images/sympnoia.jpeg',
     handle: '@sympnoia',
     platform: 'TikTok IPA 5',
     desc: 'Konten kreatif dengan total views 277K+ di video terpopuler. Kolaborasi dan cerita kehidupan.',
   },
   {
     emoji: '🏫',
-    img: '/images/cc-asavatra.jpg',
+    img: '/images/fa1ilkom.jpeg',
     handle: '@asavatraa',
     platform: 'TikTok FA1 ILKOM',
     desc: 'Dokumentasi kegiatan dan konten komunitas mahasiswa Ilmu Komunikasi angkatan FA1.',
