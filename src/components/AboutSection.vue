@@ -231,6 +231,7 @@ const socials = [
 .about-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
+   text-align: left; 
   gap: 0.75rem;
   margin: 2rem 0;
 }
