@@ -47,15 +47,15 @@
       <!-- Videographer -->
       <div v-if="activeTab === 'video'" class="video-showcase">
         <div class="video-hero">
-          <div class="video-thumb">
-
-            <video autoplay muted loop playsinline width="100%">
-                <source src="/images/tes.mp4" type="video/mp4" />
-                    Browser kamu tidak mendukung video.
-            </video>
-
-            <div class="video-fallback">🎬</div>
-            <div class="play-btn">▶</div>
+          <div class="video-thumb" @click="togglePlay" ref="videoWrap">
+            <video
+              ref="videoEl"
+              src="/videos/gesit.mp4"
+              loop
+              playsinline
+              preload="metadata"
+            ></video>
+            <div class="play-btn" :class="{ hidden: isPlaying }">▶</div>
           </div>
           <div class="video-info">
             <span class="card-tag">Videographer & Editor</span>
@@ -101,6 +101,19 @@ const tabs = [
   { key: 'video',   label: '🎬 Videographer & Editor' },
 ]
 const activeTab = ref('creator')
+const videoEl = ref(null)
+const isPlaying = ref(false)
+
+function togglePlay() {
+  if (!videoEl.value) return
+  if (isPlaying.value) {
+    videoEl.value.pause()
+    isPlaying.value = false
+  } else {
+    videoEl.value.play()
+    isPlaying.value = true
+  }
+}
 
 const accounts = [
   {
@@ -132,12 +145,11 @@ const stats = [
   { num: '2024', label: 'Tahun Aktif' },
 ]
 
-const videoClips = [
-//   { img: 'src/images/gesit1.jpeg', caption: '"Hidup selain ngajarin kita..."' },
-  { img: '/images/gesit1.jpeg'},
-  { img: '/images/gesit2.jpeg'},
-  { img: '/images/gesit3.jpeg'},
-]
+// const videoClips = [
+//   { img: '/images/gesit1.jpeg'},
+//   { img: '/images/gesit2.jpeg'},
+//   { img: '/images/gesit3.jpeg'},
+// ]
 </script>
 
 <style scoped>
@@ -313,13 +325,24 @@ const videoClips = [
 
 .video-thumb {
   flex-shrink: 0;
-  width: 360px;
+  width: 220px;
   border-radius: 20px;
   overflow: hidden;
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 9 / 16;
   background: var(--pink-light);
   cursor: pointer;
+}
+
+.video-thumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-thumb:hover video {
+  transform: none;
 }
 
 .video-thumb img {
@@ -354,12 +377,15 @@ const videoClips = [
   justify-content: center;
   font-size: 2rem;
   color: #fff;
-  background: rgba(0,0,0,0.2);
-  opacity: 0;
+  background: rgba(0,0,0,0.25);
   transition: opacity 0.2s;
 }
 
-.video-thumb:hover .play-btn {
+.play-btn.hidden {
+  opacity: 0;
+}
+
+.video-thumb:hover .play-btn.hidden {
   opacity: 1;
 }
 
