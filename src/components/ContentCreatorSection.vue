@@ -53,7 +53,7 @@
                 <source src="/images/tes.mp4" type="video/mp4" />
                     Browser kamu tidak mendukung video.
             </video>
-            
+
             <div class="video-fallback">🎬</div>
             <div class="play-btn">▶</div>
           </div>
@@ -105,21 +105,21 @@ const activeTab = ref('creator')
 const accounts = [
   {
     emoji: '🎓',
-    img: 'src/images/ilkomBKU.jpeg',
+    img: '/images/ilkomBKU.jpeg',
     handle: '@ilmukomunikasi.bku',
     platform: 'TikTok — Prodi Ilmu Komunikasi',
     desc: 'Konten edukasi dan dokumentasi kegiatan akademik program studi Ilmu Komunikasi BKU.',
   },
   {
     emoji: '✨',
-    img: 'src/images/sympnoia.jpeg',
+    img: '/images/sympnoia.jpeg',
     handle: '@sympnoia',
     platform: 'TikTok IPA 5',
     desc: 'Konten kreatif dengan total views 277K+ di video terpopuler. Kolaborasi dan cerita kehidupan.',
   },
   {
     emoji: '🏫',
-    img: 'src/images/fa1ilkom.jpeg',
+    img: '/images/fa1ilkom.jpeg',
     handle: '@asavatraa',
     platform: 'TikTok FA1 ILKOM',
     desc: 'Dokumentasi kegiatan dan konten komunitas mahasiswa Ilmu Komunikasi angkatan FA1.',
@@ -134,9 +134,9 @@ const stats = [
 
 const videoClips = [
 //   { img: 'src/images/gesit1.jpeg', caption: '"Hidup selain ngajarin kita..."' },
-  { img: 'src/images/gesit1.jpeg'},
-  { img: 'src/images/gesit2.jpeg'},
-  { img: 'src/images/gesit3.jpeg'},
+  { img: '/images/gesit1.jpeg'},
+  { img: '/images/gesit2.jpeg'},
+  { img: '/images/gesit3.jpeg'},
 ]
 </script>
 
