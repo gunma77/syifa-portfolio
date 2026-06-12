@@ -63,7 +63,7 @@
             <p class="video-org">Kitabisa × Salam Setara × Relawan Gesit</p>
             <p class="video-desc">
               Merekam dan mengedit konten video kegiatan sosial relawan di Bandung.
-              Video dipublikasikan di TikTok <strong>@gesit_kotabandung</strong> dan
+              Video dipublikasikan di Instagram <strong>@gesit_kotabandung</strong> dan
               mengabadikan momen inspiratif bersama anak-anak serta komunitas.
             </p>
             <div class="video-stats">
@@ -118,21 +118,21 @@ function togglePlay() {
 const accounts = [
   {
     emoji: '🎓',
-    img: '/images/ilkomBKU.jpeg',
+    img: '/images/cc-prodi.jpg',
     handle: '@ilmukomunikasi.bku',
     platform: 'TikTok — Prodi Ilmu Komunikasi',
     desc: 'Konten edukasi dan dokumentasi kegiatan akademik program studi Ilmu Komunikasi BKU.',
   },
   {
     emoji: '✨',
-    img: '/images/sympnoia.jpeg',
+    img: '/images/cc-sympnoia.jpg',
     handle: '@sympnoia',
     platform: 'TikTok IPA 5',
     desc: 'Konten kreatif dengan total views 277K+ di video terpopuler. Kolaborasi dan cerita kehidupan.',
   },
   {
     emoji: '🏫',
-    img: '/images/fa1ilkom.jpeg',
+    img: '/images/cc-asavatra.jpg',
     handle: '@asavatraa',
     platform: 'TikTok FA1 ILKOM',
     desc: 'Dokumentasi kegiatan dan konten komunitas mahasiswa Ilmu Komunikasi angkatan FA1.',
@@ -145,11 +145,11 @@ const stats = [
   { num: '2024', label: 'Tahun Aktif' },
 ]
 
-// const videoClips = [
-//   { img: '/images/gesit1.jpeg'},
-//   { img: '/images/gesit2.jpeg'},
-//   { img: '/images/gesit3.jpeg'},
-// ]
+const videoClips = [
+  { img: '/images/video-1.jpg', caption: '"Hidup selain ngajarin kita..."' },
+  { img: '/images/video-2.jpg', caption: '"Soalnya kita volunteeran bareng!!"' },
+  { img: '/images/video-3.jpg', caption: 'Energi positif dari senyuman anak-anak' },
+]
 </script>
 
 <style scoped>
@@ -378,15 +378,19 @@ const stats = [
   font-size: 2rem;
   color: #fff;
   background: rgba(0,0,0,0.25);
-  transition: opacity 0.2s;
+  transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 .play-btn.hidden {
   opacity: 0;
 }
 
-.video-thumb:hover .play-btn.hidden {
-  opacity: 1;
+/* Hanya desktop yang punya hover */
+@media (hover: hover) {
+  .video-thumb:hover .play-btn.hidden {
+    opacity: 0.6;
+  }
 }
 
 .video-info {
