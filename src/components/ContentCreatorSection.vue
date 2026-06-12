@@ -146,9 +146,9 @@ const stats = [
 ]
 
 const videoClips = [
-  { img: '/images/video-1.jpg', caption: '"Hidup selain ngajarin kita..."' },
-  { img: '/images/video-2.jpg', caption: '"Soalnya kita volunteeran bareng!!"' },
-  { img: '/images/video-3.jpg', caption: 'Energi positif dari senyuman anak-anak' },
+  { img: '/images/gesit1.jpg', caption: '"Hidup selain ngajarin kita..."' },
+  { img: '/images/gesit2.jpg', caption: '"Soalnya kita volunteeran bareng!!"' },
+  { img: '/images/gesit3.jpg', caption: 'Energi positif dari senyuman anak-anak' },
 ]
 </script>
 
