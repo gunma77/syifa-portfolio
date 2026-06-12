@@ -60,7 +60,7 @@ const activeTab = ref('Semua')
 const projects = [
   {
     emoji: '🎓',
-    img: '/src/images/viskara.jpeg',
+    img: '/images/viskara.jpeg',
     title: 'VISKARA Graduation',
     category: 'Desain Grafis',
     desc: 'Desain identitas visual lengkap untuk acara wisuda VISKARA mulai dari logo, poster Coming Soon, hingga materi publikasi acara.',
@@ -69,7 +69,7 @@ const projects = [
   },
   {
     emoji: '📣',
-    img: '/src/images/aspikom.jpeg',
+    img: '/images/aspikom.jpeg',
     title: 'ASPIKOM — ISCF 2025',
     category: 'Desain Grafis',
     desc: 'Desain materi publikasi untuk International Student Communication Festival 2025, termasuk poster utama dan announcement juara.',
@@ -78,7 +78,7 @@ const projects = [
   },
   {
     emoji: '📊',
-    img: '/src/images/infografisKoi.jpeg',
+    img: '/images/infografisKoi.jpeg',
     title: 'Infografis Edukasi',
     category: 'Infografis',
     desc: 'Kumpulan infografis edukatif Feed the Fish, Pengaruh Media Sosial, Anti-Bullying, dan Desain Grafis Palestine.',
@@ -87,7 +87,7 @@ const projects = [
   },
   {
     emoji: '📖',
-    img: 'src/images/tujuhSemesta.jpeg',
+    img: '/images/tujuhSemesta.jpeg',
     title: 'Toedjoeh Semesta',
     category: 'Book Cover',
     desc: 'Desain cover buku fiksi "Toedjoeh Semesta" yang diterbitkan oleh PT Arus Pedia Creative. Termasuk desain depan, belakang, dan layout.',
@@ -96,7 +96,7 @@ const projects = [
   },
   {
     emoji: '📱',
-    img: 'src/images/fsos.jpeg',
+    img: '/images/fsos.jpeg',
     title: 'Design Feeds — BEM FSOS',
     category: 'Desain Grafis',
     desc: 'Desain feed Instagram untuk BEM FSOS mencakup konten hari besar nasional, Kartini Modern, Idul Fitri, dan kampanye sosial.',

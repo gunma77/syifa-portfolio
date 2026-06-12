@@ -5,7 +5,7 @@
       <!-- Kiri: foto polaroid -->
       <div class="about-visual">
         <div class="polaroid">
-          <img src="/src/images/ssadha2.jpeg" alt="Syifa" />
+          <img src="/images/ssadha2.jpeg" alt="Syifa" />
           <div class="polaroid-fallback">✦</div>
           <p class="polaroid-caption">Syifa Adha Khoirunnisa</p>
         </div>

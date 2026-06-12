@@ -39,7 +39,7 @@
       <div class="hero-photo-wrap">
         <div class="hero-photo-bg"></div>
         <div class="hero-photo">
-          <img src="/src/images/ssadha.jpeg" alt="Syifa Adha Khoirunnisa" />
+          <img src="/images/ssadha.jpeg" alt="Syifa Adha Khoirunnisa" />
           <!-- Fallback kalau foto belum ada -->
           <div class="photo-fallback">SAK</div>
         </div>
