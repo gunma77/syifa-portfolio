@@ -362,6 +362,7 @@ onUnmounted(() => {
 /* ── Kanan: form ── */
 .contact-right {
   flex: 1;
+  width: 100%; /* ← tambah ini juga biar form full width */
 }
 
 .form-card {
@@ -496,6 +497,7 @@ onUnmounted(() => {
 
   .contact-inner {
     flex-direction: column;
+     align-items: center; /* ← tambah ini */
     gap: 3rem;
     padding-bottom: 5rem;
   }
