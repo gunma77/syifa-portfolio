@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar" :class="{ scrolled: isScrolled }">
+  <nav ref="navbar" class="navbar" :class="{ scrolled: isScrolled }">
     <div class="nav-inner">
       <ul class="nav-links">
         <li v-for="link in links" :key="link.href">
@@ -27,23 +27,67 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import gsap from 'gsap'
 
+const navbar = ref(null)
 const isScrolled = ref(false)
 const menuOpen = ref(false)
 
 const links = [
-  { href: '#about',   label: 'About' },
-  { href: '#skills',  label: 'Skills' },
+  { href: '#about',      label: 'About' },
+  { href: '#skills',     label: 'Skills' },
   { href: '#experience', label: 'Experience' },
-  { href: '#projects', label: 'Projects' },
+  { href: '#projects',   label: 'Projects' },
 ]
 
+let lastScrollY = 0
+let isHidden = false
+
 function onScroll() {
-  isScrolled.value = window.scrollY > 20
+  const currentScrollY = window.scrollY
+
+  // Update scrolled state (untuk background blur effect)
+  isScrolled.value = currentScrollY > 20
+
+  // Jangan hide navbar kalau mobile menu sedang buka
+  if (menuOpen.value) {
+    lastScrollY = currentScrollY
+    return
+  }
+
+  // Scroll ke bawah & sudah melewati threshold → sembunyikan
+  if (currentScrollY > lastScrollY && currentScrollY > 80) {
+    if (!isHidden) {
+      isHidden = true
+      gsap.to(navbar.value, {
+        yPercent: -100,
+        duration: 0.35,
+        ease: 'power2.in',
+      })
+    }
+  }
+  // Scroll ke atas → tampilkan kembali
+  else if (currentScrollY < lastScrollY) {
+    if (isHidden) {
+      isHidden = false
+      gsap.to(navbar.value, {
+        yPercent: 0,
+        duration: 0.35,
+        ease: 'power2.out',
+      })
+    }
+  }
+
+  lastScrollY = currentScrollY
 }
 
-onMounted(() => window.addEventListener('scroll', onScroll))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+})
 </script>
 
 <style scoped>
@@ -55,6 +99,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   z-index: 100;
   height: var(--nav-h);
   transition: background 0.3s, box-shadow 0.3s;
+  /* GSAP akan mengontrol transform, jangan ada transition: transform di sini */
 }
 
 .navbar.scrolled {
