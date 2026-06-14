@@ -159,7 +159,6 @@ const contacts = [
   {
     platform: 'Email',
     label: 'adhasyifa53@gmail.com',
-    href: 'mailto:adhasyifa53@gmail.com',
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>`,
   },
   {
