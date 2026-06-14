@@ -3,29 +3,29 @@
     <div class="about-inner">
 
       <!-- Kiri: foto polaroid -->
-      <div class="about-visual anim anim-left" :class="{ visible: inView }">
+      <div class="about-visual anim anim-left">
         <div class="polaroid">
           <img src="/images/ssadha2.jpeg" alt="Syifa" />
           <div class="polaroid-fallback">✦</div>
           <p class="polaroid-caption">Syifa Adha Khoirunnisa</p>
         </div>
         <!-- Dekorasi -->
-        <div class="deco-star deco-1 anim anim-pop" :class="{ visible: inView }" style="--pop-delay: 0.5s">✦</div>
-        <div class="deco-star deco-2 anim anim-pop" :class="{ visible: inView }" style="--pop-delay: 0.65s">★</div>
-        <div class="deco-dot anim anim-pop" :class="{ visible: inView }" style="--pop-delay: 0.55s"></div>
+        <div class="deco-star deco-1 anim anim-pop">✦</div>
+        <div class="deco-star deco-2 anim anim-pop">★</div>
+        <div class="deco-dot anim anim-pop"></div>
       </div>
 
       <!-- Kanan: konten -->
       <div class="about-content">
-        <p class="section-eyebrow anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.2s">A little about me</p>
-        <h2 class="section-title anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.35s">Halo, Saya <em>Syifa!</em></h2>
+        <p class="section-eyebrow anim anim-up">A little about me</p>
+        <h2 class="section-title anim anim-up">Halo, Saya <em>Syifa!</em></h2>
 
-        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.48s">
+        <p class="about-bio anim anim-up">
           Mahasiswa Ilmu Komunikasi Semester 4 di Bhakti Kencana University.
           Saya memiliki ketertarikan dan keahlian di bidang desain grafis, fotografi,
           dan videografi dengan pengalaman lebih dari <strong>3 tahun</strong>.
         </p>
-        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.48s">
+        <p class="about-bio anim anim-up">
           Saya mampu berkomunikasi secara efektif serta bekerja sama dalam tim
           untuk mencapai tujuan bersama. Setiap karya mencerminkan komitmen saya
           terhadap kualitas, inovasi, dan pendekatan visual yang kuat.
@@ -35,10 +35,8 @@
         <div class="about-cards">
           <div
             class="info-card anim anim-up"
-            :class="{ visible: inView }"
             v-for="(item, i) in info"
             :key="item.label"
-            :style="`--up-delay: ${0.68 + i * 0.1}s`"
           >
             <span class="info-icon" v-html="item.icon"></span>
             <div>
@@ -56,8 +54,6 @@
             :href="s.href"
             target="_blank"
             class="social-pill anim anim-up"
-            :class="{ visible: inView }"
-            :style="`--up-delay: ${0.9 + i * 0.08}s`"
           >
             <span class="social-icon" v-html="s.icon"></span>
             {{ s.label }}
@@ -73,28 +69,28 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const sectionRef = ref(null)
-const inView = ref(false)
-
 let observer = null
 
 onMounted(() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (reduced) {
-    inView.value = true
+    sectionRef.value?.querySelectorAll('.anim').forEach(el => el.classList.add('visible'))
     return
   }
 
   observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        inView.value = true
-        observer.disconnect() // animasi cukup sekali
-      }
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible')
+          observer.unobserve(entry.target)
+        }
+      })
     },
     { threshold: 0.15 }
   )
 
-  if (sectionRef.value) observer.observe(sectionRef.value)
+  sectionRef.value?.querySelectorAll('.anim').forEach(el => observer.observe(el))
 })
 
 onUnmounted(() => {
@@ -148,43 +144,38 @@ const socials = [
    ENTRANCE ANIMATION
 ───────────────────────────────────── */
 
-/* Slide dari bawah — teks & cards */
 .anim-up {
   opacity: 0;
   transform: translateY(24px);
   transition:
-    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s),
-    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s);
+    opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Slide dari kiri — kolom foto */
 .anim-left {
   opacity: 0;
   transform: translateX(-32px) rotate(-2deg);
   transition:
-    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.05s,
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.05s;
+    opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Pop — dekorasi bintang & dot */
 .anim-pop {
   opacity: 0;
   transform: scale(0.5);
   transition:
-    opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s),
-    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s);
+    opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* State visible */
 .anim.visible {
   opacity: 1;
   transform: none;
 }
 
-/* Polaroid tetap sedikit miring saat visible */
 .about-visual.anim-left.visible {
   opacity: 1;
-  transform: none; /* rotate dihandle oleh .polaroid sendiri */
+  transform: none;
 }
 
 /* ─────────────────────────────────────
@@ -339,12 +330,15 @@ const socials = [
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.75rem 1rem;
-  transition: border-color 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.info-card:hover {
+.info-card.visible:hover {
   border-color: var(--pink);
-  transform: translateY(-2px);
+  transform: translateY(-2px) !important;
 }
 
 .info-icon {
