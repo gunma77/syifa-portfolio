@@ -1,9 +1,14 @@
 <template>
-  <section class="creator" id="content-creator">
+  <section class="creator" id="content-creator" ref="sectionRef">
     <div class="creator-inner">
 
       <!-- Header -->
-      <div class="section-header">
+      <div
+        class="section-header anim anim-up"
+        :class="{ visible: isVisible('header') }"
+        data-key="header"
+        style="--delay: 0s"
+      >
         <p class="section-eyebrow">Content Creator & Videographer</p>
         <h2 class="section-title">Behind the <em>Camera</em></h2>
         <p class="section-sub">
@@ -11,8 +16,13 @@
         </p>
       </div>
 
-      <!-- Tabs: Content Creator / Videographer -->
-      <div class="creator-tabs">
+      <!-- Tabs -->
+      <div
+        class="creator-tabs anim anim-up"
+        :class="{ visible: isVisible('tabs') }"
+        data-key="tabs"
+        style="--delay: 0.1s"
+      >
         <button
           v-for="tab in tabs"
           :key="tab.key"
@@ -27,7 +37,14 @@
 
       <!-- Content Creator -->
       <div v-if="activeTab === 'creator'" class="phones-showcase">
-        <div class="phone-wrap" v-for="(acc, i) in accounts" :key="i">
+        <div
+          class="phone-wrap anim anim-up"
+          :class="{ visible: isVisible('phone-' + i) }"
+          :data-key="'phone-' + i"
+          :style="`--delay: ${0.08 * i}s`"
+          v-for="(acc, i) in accounts"
+          :key="i"
+        >
           <div class="phone-frame">
             <div class="phone-screen">
               <img :src="acc.img" :alt="acc.handle" />
@@ -48,7 +65,14 @@
       <!-- Videographer -->
       <div v-if="activeTab === 'video'" class="video-showcase">
         <div class="video-hero">
-          <div class="video-thumb" @click="togglePlay" ref="videoWrap">
+          <div
+            class="video-thumb anim anim-scale"
+            :class="{ visible: isVisible('video-thumb') }"
+            data-key="video-thumb"
+            style="--delay: 0s"
+            @click="togglePlay"
+            ref="videoWrap"
+          >
             <video
               ref="videoEl"
               src="/videos/gesit.mp4"
@@ -57,13 +81,18 @@
               preload="metadata"
             ></video>
             <div class="play-btn" :class="{ hidden: isPlaying }">
-              <!-- SVG Play icon -->
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
                 <path d="M8 5v14l11-7L8 5z"/>
               </svg>
             </div>
           </div>
-          <div class="video-info">
+
+          <div
+            class="video-info anim anim-left"
+            :class="{ visible: isVisible('video-info') }"
+            data-key="video-info"
+            style="--delay: 0.1s"
+          >
             <span class="card-tag">Videographer & Editor</span>
             <h3 class="video-title">Relawan Gesit Bandung</h3>
             <p class="video-org">Kitabisa × Salam Setara × Relawan Gesit</p>
@@ -73,7 +102,14 @@
               mengabadikan momen inspiratif bersama anak-anak serta komunitas.
             </p>
             <div class="video-stats">
-              <div class="stat" v-for="s in stats" :key="s.label">
+              <div
+                class="stat anim anim-up"
+                :class="{ visible: isVisible('stat-' + s.label) }"
+                :data-key="'stat-' + s.label"
+                :style="`--delay: ${0.2 + 0.08 * si}s`"
+                v-for="(s, si) in stats"
+                :key="s.label"
+              >
                 <p class="stat-num">{{ s.num }}</p>
                 <p class="stat-label">{{ s.label }}</p>
               </div>
@@ -83,11 +119,17 @@
 
         <!-- Phone mockup tambahan -->
         <div class="video-phones">
-          <div class="vphone" v-for="(v, i) in videoClips" :key="i">
+          <div
+            class="vphone anim anim-up"
+            :class="{ visible: isVisible('vphone-' + i) }"
+            :data-key="'vphone-' + i"
+            :style="`--delay: ${0.08 * i}s`"
+            v-for="(v, i) in videoClips"
+            :key="i"
+          >
             <div class="vphone-screen">
               <img :src="v.img" :alt="v.caption" />
               <div class="vphone-fallback">
-                <!-- SVG kamera video -->
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
                   <path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/>
                 </svg>
@@ -105,13 +147,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+
+const sectionRef = ref(null)
+const visibleItems = ref(new Set())
+let observer = null
+
+const isVisible = (key) => visibleItems.value.has(String(key))
+
+const markVisible = (key) => {
+  visibleItems.value = new Set([...visibleItems.value, key])
+}
+
+const observeEl = (el) => {
+  if (el && el.dataset.key) observer?.observe(el)
+}
+
+// Re-observe elemen setelah tab switch
+const observeAll = () => {
+  if (!sectionRef.value || !observer) return
+  sectionRef.value.querySelectorAll('[data-key]').forEach(el => {
+    // Kalau sudah visible, skip
+    if (!visibleItems.value.has(el.dataset.key)) {
+      observer.observe(el)
+    }
+  })
+}
 
 const tabs = [
   {
     key: 'creator',
     label: 'Content Creator',
-    // SVG smartphone
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
       <path d="M17 1H7C5.9 1 5 1.9 5 3v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm-5 20c-.83 0-1.5-.67-1.5-1.5S11.17 18 12 18s1.5.67 1.5 1.5S12.83 21 12 21zm5-4H7V4h10v13z"/>
     </svg>`,
@@ -119,12 +185,12 @@ const tabs = [
   {
     key: 'video',
     label: 'Videographer & Editor',
-    // SVG clapperboard / film
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
       <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
     </svg>`,
   },
 ]
+
 const activeTab = ref('creator')
 const videoEl = ref(null)
 const isPlaying = ref(false)
@@ -142,7 +208,6 @@ function togglePlay() {
 
 const accounts = [
   {
-    // SVG graduation cap
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
       <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
     </svg>`,
@@ -152,7 +217,6 @@ const accounts = [
     desc: 'Konten edukasi dan dokumentasi kegiatan akademik program studi Ilmu Komunikasi BKU.',
   },
   {
-    // SVG sparkle / bintang
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
       <path d="M12 1l2.39 7.26H22l-6.19 4.5 2.35 7.24L12 15.9l-6.16 4.1 2.35-7.24L2 8.26h7.61L12 1z"/>
     </svg>`,
@@ -162,7 +226,6 @@ const accounts = [
     desc: 'Konten kreatif dengan total views 277K+ di video terpopuler. Kolaborasi dan cerita kehidupan.',
   },
   {
-    // SVG school / gedung
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
       <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 11-6-11-6z"/>
     </svg>`,
@@ -180,9 +243,89 @@ const stats = [
 ]
 
 const videoClips = []
+
+// Setelah ganti tab, observe elemen-elemen baru di DOM
+watch(activeTab, () => {
+  setTimeout(observeAll, 50)
+})
+
+onMounted(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced) {
+    // Tandai semua visible langsung
+    const allKeys = [
+      'header', 'tabs',
+      ...accounts.map((_, i) => `phone-${i}`),
+      'video-thumb', 'video-info',
+      ...stats.map(s => `stat-${s.label}`),
+      ...videoClips.map((_, i) => `vphone-${i}`),
+    ]
+    visibleItems.value = new Set(allKeys)
+    return
+  }
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          markVisible(entry.target.dataset.key)
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 0.12 }
+  )
+
+  // Observe semua elemen yang ada data-key di DOM awal
+  observeAll()
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
 </script>
 
 <style scoped>
+/* ─────────────────────────────────────
+   ENTRANCE ANIMATIONS
+───────────────────────────────────── */
+
+/* Fade + slide atas (default) */
+.anim-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Fade + slide dari kiri (untuk video-info) */
+.anim-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Fade + scale kecil (untuk video thumb) */
+.anim-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* State visible — semua kembali ke normal */
+.anim.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
 .creator {
   padding: 7rem 2rem;
   background: var(--surface);
@@ -272,13 +415,8 @@ const videoClips = []
   line-height: 1;
 }
 
-.tab-btn.active .tab-icon svg {
-  fill: #fff;
-}
-
-.tab-btn:not(.active) .tab-icon svg {
-  fill: currentColor;
-}
+.tab-btn.active .tab-icon svg { fill: #fff; }
+.tab-btn:not(.active) .tab-icon svg { fill: currentColor; }
 
 /* ── Phone showcase (Content Creator) ── */
 .phones-showcase {
@@ -336,9 +474,7 @@ const videoClips = []
   color: var(--pink-dark);
 }
 
-.fallback-icon svg {
-  fill: var(--pink-dark);
-}
+.fallback-icon svg { fill: var(--pink-dark); }
 
 .phone-fallback p {
   font-size: 0.75rem;
@@ -403,34 +539,6 @@ const videoClips = []
   display: block;
 }
 
-.video-thumb:hover video {
-  transform: none;
-}
-
-.video-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.3s;
-}
-
-.video-thumb:hover img {
-  transform: scale(1.04);
-}
-
-.video-fallback {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--pink-light);
-  color: var(--pink-dark);
-}
-
-.video-thumb img + .video-fallback { display: none; }
-
 .play-btn {
   position: absolute;
   inset: 0;
@@ -443,15 +551,10 @@ const videoClips = []
   pointer-events: none;
 }
 
-.play-btn.hidden {
-  opacity: 0;
-}
+.play-btn.hidden { opacity: 0; }
 
-/* Hanya desktop yang punya hover */
 @media (hover: hover) {
-  .video-thumb:hover .play-btn.hidden {
-    opacity: 0.6;
-  }
+  .video-thumb:hover .play-btn.hidden { opacity: 0.6; }
 }
 
 .video-info {
@@ -519,10 +622,7 @@ const videoClips = []
   justify-content: center;
 }
 
-.vphone {
-  width: 160px;
-  flex-shrink: 0;
-}
+.vphone { width: 160px; flex-shrink: 0; }
 
 .vphone-screen {
   border-radius: 16px;
@@ -549,17 +649,12 @@ const videoClips = []
   color: var(--pink-dark);
 }
 
-.vphone-fallback svg {
-  fill: var(--pink-dark);
-}
-
+.vphone-fallback svg { fill: var(--pink-dark); }
 .vphone-screen img + .vphone-fallback { display: none; }
 
 .vphone-overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
   padding: 1rem 0.75rem 0.6rem;
 }
@@ -572,33 +667,26 @@ const videoClips = []
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .creator {
-    padding: 5rem 1.5rem;
-  }
-
-  .phones-showcase {
-    gap: 2rem;
-  }
-
-  .phone-frame {
-    width: 160px;
-  }
+  .creator { padding: 5rem 1.5rem; }
+  .phones-showcase { gap: 2rem; }
+  .phone-frame { width: 160px; }
 
   .video-hero {
     flex-direction: column;
     gap: 2rem;
   }
 
-  .video-thumb {
-    width: 100%;
-  }
+  .video-thumb { width: 100%; }
+  .video-phones { gap: 1rem; }
+  .vphone { width: 120px; }
+}
 
-  .video-phones {
-    gap: 1rem;
-  }
-
-  .vphone {
-    width: 120px;
+/* Reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .anim-up, .anim-left, .anim-scale {
+    transition: none;
+    opacity: 1;
+    transform: none !important;
   }
 }
 </style>

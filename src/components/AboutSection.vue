@@ -1,31 +1,31 @@
 <template>
-  <section class="about" id="about">
+  <section class="about" id="about" ref="sectionRef">
     <div class="about-inner">
 
       <!-- Kiri: foto polaroid -->
-      <div class="about-visual">
+      <div class="about-visual anim anim-left" :class="{ visible: inView }">
         <div class="polaroid">
           <img src="/images/ssadha2.jpeg" alt="Syifa" />
           <div class="polaroid-fallback">✦</div>
           <p class="polaroid-caption">Syifa Adha Khoirunnisa</p>
         </div>
         <!-- Dekorasi -->
-        <div class="deco-star deco-1">✦</div>
-        <div class="deco-star deco-2">★</div>
-        <div class="deco-dot"></div>
+        <div class="deco-star deco-1 anim anim-pop" :class="{ visible: inView }" style="--pop-delay: 0.5s">✦</div>
+        <div class="deco-star deco-2 anim anim-pop" :class="{ visible: inView }" style="--pop-delay: 0.65s">★</div>
+        <div class="deco-dot anim anim-pop" :class="{ visible: inView }" style="--pop-delay: 0.55s"></div>
       </div>
 
       <!-- Kanan: konten -->
       <div class="about-content">
-        <p class="section-eyebrow">A little about me</p>
-        <h2 class="section-title">Halo, Saya <em>Syifa!</em></h2>
+        <p class="section-eyebrow anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.15s">A little about me</p>
+        <h2 class="section-title anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.25s">Halo, Saya <em>Syifa!</em></h2>
 
-        <p class="about-bio">
+        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.35s">
           Mahasiswa Ilmu Komunikasi Semester 4 di Bhakti Kencana University.
           Saya memiliki ketertarikan dan keahlian di bidang desain grafis, fotografi,
           dan videografi dengan pengalaman lebih dari <strong>3 tahun</strong>.
         </p>
-        <p class="about-bio">
+        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.42s">
           Saya mampu berkomunikasi secara efektif serta bekerja sama dalam tim
           untuk mencapai tujuan bersama. Setiap karya mencerminkan komitmen saya
           terhadap kualitas, inovasi, dan pendekatan visual yang kuat.
@@ -33,9 +33,14 @@
 
         <!-- Info cards -->
         <div class="about-cards">
-          <div class="info-card" v-for="item in info" :key="item.label">
-            <!-- <span class="info-icon">{{ item.icon }}</span> -->
-             <span class="info-icon" v-html="item.icon"></span>
+          <div
+            class="info-card anim anim-up"
+            :class="{ visible: inView }"
+            v-for="(item, i) in info"
+            :key="item.label"
+            :style="`--up-delay: ${0.5 + i * 0.08}s`"
+          >
+            <span class="info-icon" v-html="item.icon"></span>
             <div>
               <p class="info-label">{{ item.label }}</p>
               <p class="info-value">{{ item.value }}</p>
@@ -45,7 +50,15 @@
 
         <!-- Social links -->
         <div class="about-socials">
-          <a v-for="s in socials" :key="s.label" :href="s.href" target="_blank" class="social-pill">
+          <a
+            v-for="(s, i) in socials"
+            :key="s.label"
+            :href="s.href"
+            target="_blank"
+            class="social-pill anim anim-up"
+            :class="{ visible: inView }"
+            :style="`--up-delay: ${0.7 + i * 0.07}s`"
+          >
             <span class="social-icon" v-html="s.icon"></span>
             {{ s.label }}
           </a>
@@ -57,6 +70,37 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const sectionRef = ref(null)
+const inView = ref(false)
+
+let observer = null
+
+onMounted(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced) {
+    inView.value = true
+    return
+  }
+
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        inView.value = true
+        observer.disconnect() // animasi cukup sekali
+      }
+    },
+    { threshold: 0.15 }
+  )
+
+  if (sectionRef.value) observer.observe(sectionRef.value)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
+
 const info = [
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>`,
@@ -100,6 +144,52 @@ const socials = [
 </script>
 
 <style scoped>
+/* ─────────────────────────────────────
+   ENTRANCE ANIMATION
+───────────────────────────────────── */
+
+/* Slide dari bawah — teks & cards */
+.anim-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s);
+}
+
+/* Slide dari kiri — kolom foto */
+.anim-left {
+  opacity: 0;
+  transform: translateX(-32px) rotate(-2deg);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.05s,
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.05s;
+}
+
+/* Pop — dekorasi bintang & dot */
+.anim-pop {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s),
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s);
+}
+
+/* State visible */
+.anim.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Polaroid tetap sedikit miring saat visible */
+.about-visual.anim-left.visible {
+  opacity: 1;
+  transform: none; /* rotate dihandle oleh .polaroid sendiri */
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
 .about {
   padding: 7rem 2rem;
   background: var(--surface);
@@ -128,6 +218,12 @@ const socials = [
   transform: rotate(-2deg);
   position: relative;
   z-index: 1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.polaroid:hover {
+  transform: rotate(0deg) scale(1.02);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.14);
 }
 
 .polaroid img {
@@ -230,7 +326,7 @@ const socials = [
 .about-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-   text-align: left; 
+  text-align: left;
   gap: 0.75rem;
   margin: 2rem 0;
 }
@@ -243,6 +339,12 @@ const socials = [
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.75rem 1rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.info-card:hover {
+  border-color: var(--pink);
+  transform: translateY(-2px);
 }
 
 .info-icon {
@@ -279,12 +381,13 @@ const socials = [
   font-size: 0.8rem;
   color: var(--text-muted);
   text-decoration: none;
-  transition: border-color 0.2s, color 0.2s;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
 }
 
 .social-pill:hover {
   border-color: var(--pink);
   color: var(--pink-dark);
+  transform: translateY(-1px);
 }
 
 .social-icon {
@@ -297,6 +400,12 @@ const socials = [
 .social-icon :deep(svg) {
   width: 14px;
   height: 14px;
+}
+
+.info-icon :deep(svg) {
+  width: 1.2rem;
+  height: 1.2rem;
+  stroke: var(--pink-dark);
 }
 
 /* ── Responsive ── */
@@ -332,9 +441,12 @@ const socials = [
   }
 }
 
-.info-icon :deep(svg) {
-  width: 1.2rem;
-  height: 1.2rem;
-  stroke: var(--pink-dark);
+/* Reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .anim-up, .anim-left, .anim-pop {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 </style>

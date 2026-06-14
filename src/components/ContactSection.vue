@@ -1,23 +1,43 @@
 <template>
-  <section class="contact" id="contact">
+  <section class="contact" id="contact" ref="sectionRef">
     <div class="contact-inner">
 
       <!-- Kiri: teks & info -->
       <div class="contact-left">
-        <p class="section-eyebrow">Get in Touch</p>
-        <h2 class="section-title">Let's Work <em>Together!</em></h2>
-        <p class="contact-sub">
+        <p
+          class="section-eyebrow anim anim-up"
+          :class="{ visible: isVisible('eyebrow') }"
+          data-key="eyebrow"
+          style="--delay: 0s"
+        >Get in Touch</p>
+
+        <h2
+          class="section-title anim anim-up"
+          :class="{ visible: isVisible('title') }"
+          data-key="title"
+          style="--delay: 0.08s"
+        >Let's Work <em>Together!</em></h2>
+
+        <p
+          class="contact-sub anim anim-up"
+          :class="{ visible: isVisible('sub') }"
+          data-key="sub"
+          style="--delay: 0.14s"
+        >
           Punya proyek desain, konten, atau kolaborasi yang menarik?
           Jangan ragu untuk menghubungi saya — mari kita wujudkan ide bersama.
         </p>
 
         <div class="contact-links">
           <a
-            v-for="c in contacts"
+            v-for="(c, i) in contacts"
             :key="c.label"
             :href="c.href"
             target="_blank"
-            class="contact-item"
+            class="contact-item anim anim-left"
+            :class="{ visible: isVisible('contact-' + i) }"
+            :data-key="'contact-' + i"
+            :style="`--delay: ${0.18 + i * 0.07}s`"
           >
             <div class="contact-icon" v-html="c.icon"></div>
             <div class="contact-meta">
@@ -29,11 +49,15 @@
       </div>
 
       <!-- Kanan: form -->
-      <div class="contact-right">
+      <div
+        class="contact-right anim anim-right"
+        :class="{ visible: isVisible('form') }"
+        data-key="form"
+        style="--delay: 0.1s"
+      >
         <div class="form-card">
           <h3 class="form-title">
             Kirim Pesan
-            <!-- SVG envelope -->
             <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg">
               <rect x="2" y="4" width="20" height="16" rx="2"/>
               <path d="M2 7l10 7 10-7"/>
@@ -59,9 +83,7 @@
 
           <button class="btn-send" @click="sendEmail" :disabled="!isValid || sending">
             <span v-if="sending">Mengirim...</span>
-            <span v-else-if="sent" class="sent-state">
-              Terkirim!
-            </span>
+            <span v-else-if="sent" class="sent-state">Terkirim!</span>
             <span v-else>Kirim Pesan</span>
           </button>
           <p v-if="error" class="error-msg">Gagal mengirim, coba lagi ya.</p>
@@ -71,7 +93,12 @@
     </div>
 
     <!-- Footer -->
-    <div class="footer">
+    <div
+      class="footer anim anim-up"
+      :class="{ visible: isVisible('footer') }"
+      data-key="footer"
+      style="--delay: 0s"
+    >
       <p class="footer-name">Syifa Adha Khoirunnisa</p>
       <p class="footer-copy">© {{ new Date().getFullYear() }} — All Rights Reserved</p>
     </div>
@@ -80,7 +107,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+
+const sectionRef = ref(null)
+const visibleItems = ref(new Set())
+let observer = null
+
+const isVisible = (key) => visibleItems.value.has(String(key))
 
 const form = ref({ name: '', email: '', subject: '', message: '' })
 const sent = ref(false)
@@ -126,6 +159,7 @@ const contacts = [
   {
     platform: 'Email',
     label: 'adhasyifa53@gmail.com',
+    href: 'mailto:adhasyifa53@gmail.com',
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>`,
   },
   {
@@ -147,9 +181,77 @@ const contacts = [
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 8s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C15.4 3.8 12 3.8 12 3.8s-3.4 0-5.8.2c-.6.1-1.9.1-3 1.3C2.3 6 2 8 2 8S1.8 10.3 1.8 12.5v2.1C1.8 16.8 2 19 2 19s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C8.8 23.2 12 23.2 12 23.2s3.4 0 5.8-.3c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.2-2.3.2-4.5v-2C22.2 10.3 22 8 22 8z"/><polygon points="10,8.5 16,12 10,15.5" fill="currentColor" stroke="none"/></svg>`,
   },
 ]
+
+onMounted(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced) {
+    const keys = [
+      'eyebrow', 'title', 'sub', 'form', 'footer',
+      ...contacts.map((_, i) => `contact-${i}`),
+    ]
+    visibleItems.value = new Set(keys)
+    return
+  }
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          visibleItems.value = new Set([...visibleItems.value, entry.target.dataset.key])
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 0.12 }
+  )
+
+  sectionRef.value?.querySelectorAll('[data-key]').forEach(el => observer.observe(el))
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
 </script>
 
 <style scoped>
+/* ─────────────────────────────────────
+   ENTRANCE ANIMATIONS
+───────────────────────────────────── */
+
+.anim-up {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Contact links: slide dari kiri */
+.anim-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Form card: slide dari kanan */
+.anim-right {
+  opacity: 0;
+  transform: translateX(32px);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+.anim.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
 .contact {
   padding: 7rem 2rem 0;
   background: var(--bg);
@@ -215,10 +317,11 @@ const contacts = [
   border: 1px solid var(--border);
   border-radius: 14px;
   text-decoration: none;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s,
+              opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 
-.contact-item:hover {
+.contact-item.visible:hover {
   border-color: var(--pink);
   transform: translateX(4px);
   box-shadow: 0 4px 16px rgba(242, 167, 195, 0.12);
@@ -241,9 +344,7 @@ const contacts = [
   height: 18px;
 }
 
-.contact-meta {
-  flex: 1;
-}
+.contact-meta { flex: 1; }
 
 .contact-platform {
   font-size: 0.7rem;
@@ -256,16 +357,6 @@ const contacts = [
   font-size: 0.88rem;
   font-weight: 500;
   color: var(--text);
-}
-
-.contact-arrow {
-  color: var(--pink-dark);
-  font-size: 1rem;
-  transition: transform 0.2s;
-}
-
-.contact-item:hover .contact-arrow {
-  transform: translateX(4px);
 }
 
 /* ── Kanan: form ── */
@@ -368,10 +459,6 @@ const contacts = [
   gap: 0.4rem;
 }
 
-.sent-state svg {
-  fill: #fff;
-}
-
 .error-msg {
   font-size: 0.8rem;
   color: #e05c5c;
@@ -415,6 +502,25 @@ const contacts = [
 
   .contact-sub {
     max-width: 100%;
+  }
+
+  /* Di mobile, form slide dari bawah bukan dari kanan */
+  .anim-right {
+    transform: translateY(22px);
+  }
+
+  /* Contact links juga dari bawah di mobile */
+  .anim-left {
+    transform: translateY(22px);
+  }
+}
+
+/* Reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .anim-up, .anim-left, .anim-right {
+    transition: none;
+    opacity: 1;
+    transform: none !important;
   }
 }
 </style>

@@ -1,18 +1,24 @@
 <template>
-  <section class="skills" id="skills">
+  <section class="skills" id="skills" ref="sectionRef">
     <div class="skills-inner">
 
       <!-- Header -->
-      <div class="section-header">
+      <div class="section-header anim anim-up" :class="{ visible: inView }" style="--delay: 0s">
         <p class="section-eyebrow">What's in my tin case</p>
         <h2 class="section-title">Skills & <em>Tools</em></h2>
       </div>
 
       <!-- Soft skills -->
       <div class="skills-block">
-        <h3 class="block-label">Soft Skills</h3>
+        <h3 class="block-label anim anim-up" :class="{ visible: inView }" style="--delay: 0.08s">Soft Skills</h3>
         <div class="soft-skills">
-          <div class="soft-card" v-for="s in softSkills" :key="s.label">
+          <div
+            class="soft-card anim anim-up"
+            :class="{ visible: inView }"
+            v-for="(s, i) in softSkills"
+            :key="s.label"
+            :style="`--delay: ${0.14 + i * 0.09}s`"
+          >
             <span class="soft-icon" v-html="s.icon"></span>
             <p class="soft-label">{{ s.label }}</p>
             <p class="soft-desc">{{ s.desc }}</p>
@@ -22,9 +28,15 @@
 
       <!-- Tools -->
       <div class="skills-block">
-        <h3 class="block-label">Tools & Software</h3>
+        <h3 class="block-label anim anim-up" :class="{ visible: inView }" style="--delay: 0.52s">Tools & Software</h3>
         <div class="tools-grid">
-          <div class="tool-pill" v-for="t in tools" :key="t.name">
+          <div
+            class="tool-pill anim anim-pop"
+            :class="{ visible: inView }"
+            v-for="(t, i) in tools"
+            :key="t.name"
+            :style="`--delay: ${0.58 + i * 0.07}s`"
+          >
             <span class="tool-icon" v-html="t.icon"></span>
             <span class="tool-name">{{ t.name }}</span>
             <span class="tool-tag">{{ t.tag }}</span>
@@ -34,16 +46,23 @@
 
       <!-- Keahlian utama -->
       <div class="skills-block">
-        <h3 class="block-label">Keahlian Utama</h3>
+        <h3 class="block-label anim anim-up" :class="{ visible: inView }" style="--delay: 0.98s">Keahlian Utama</h3>
         <div class="expertise-list">
-          <div class="expertise-item" v-for="e in expertise" :key="e.label">
+          <div
+            class="expertise-item anim anim-up"
+            :class="{ visible: inView }"
+            v-for="(e, i) in expertise"
+            :key="e.label"
+            :style="`--delay: ${1.05 + i * 0.08}s`"
+          >
             <span class="expertise-name">{{ e.label }}</span>
             <div class="dots">
               <span
                 v-for="n in 5"
                 :key="n"
                 class="dot"
-                :class="{ filled: n <= e.dots }"
+                :class="{ filled: inView && n <= e.dots }"
+                :style="inView ? `transition-delay: ${1.1 + i * 0.08 + n * 0.06}s` : ''"
               ></span>
             </div>
           </div>
@@ -55,6 +74,36 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const sectionRef = ref(null)
+const inView = ref(false)
+let observer = null
+
+onMounted(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced) {
+    inView.value = true
+    return
+  }
+
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        inView.value = true
+        observer.disconnect()
+      }
+    },
+    { threshold: 0.1 }
+  )
+
+  if (sectionRef.value) observer.observe(sectionRef.value)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
+
 const softSkills = [
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
@@ -81,33 +130,27 @@ const softSkills = [
 const tools = [
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
-    name: 'Canva',
-    tag: 'Design'
+    name: 'Canva', tag: 'Design'
   },
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`,
-    name: 'CapCut',
-    tag: 'Video'
+    name: 'CapCut', tag: 'Video'
   },
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>`,
-    name: 'ibisPaint',
-    tag: 'Ilustrasi'
+    name: 'ibisPaint', tag: 'Ilustrasi'
   },
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
-    name: 'Lightroom',
-    tag: 'Foto'
+    name: 'Lightroom', tag: 'Foto'
   },
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>`,
-    name: 'Pixellab',
-    tag: 'Tipografi'
+    name: 'Pixellab', tag: 'Tipografi'
   },
   {
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
-    name: 'Pinterest',
-    tag: 'Referensi'
+    name: 'Pinterest', tag: 'Referensi'
   },
 ]
 
@@ -121,6 +164,41 @@ const expertise = [
 </script>
 
 <style scoped>
+/* ─────────────────────────────────────
+   ENTRANCE ANIMATION
+───────────────────────────────────── */
+
+/* Slide dari bawah */
+.anim-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Pop + sedikit bounce — untuk tool pills */
+.anim-pop {
+  opacity: 0;
+  transform: scale(0.85) translateY(8px);
+  transition:
+    opacity 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay, 0s),
+    transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay, 0s);
+}
+
+.anim.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Dot fill animasi */
+.dot {
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
 .skills {
   padding: 7rem 2rem;
   background: var(--bg);
@@ -193,12 +271,16 @@ const expertise = [
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1.5rem 1.25rem;
-  transition: border-color 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 
 .soft-card:hover {
   border-color: var(--pink);
-  transform: translateY(-3px);
+  transform: translateY(-3px) !important;
 }
 
 .soft-icon {
@@ -241,12 +323,17 @@ const expertise = [
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.55rem 1.1rem;
-  transition: border-color 0.2s, background 0.2s;
 }
 
-.tool-pill:hover {
+/* hover override — harus setelah .anim-pop.visible biar tidak konflik */
+.tool-pill.visible:hover {
   border-color: var(--pink);
   background: var(--pink-light);
+  transform: translateY(-2px) scale(1.03);
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.2s;
 }
 
 .tool-icon {
@@ -305,7 +392,10 @@ const expertise = [
   height: 11px;
   border-radius: 50%;
   border: 1.5px solid var(--pink);
-  transition: background 0.2s;
+  background: transparent;
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease;
 }
 
 .dot.filled {
@@ -326,6 +416,18 @@ const expertise = [
 @media (max-width: 480px) {
   .soft-skills {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .anim-up, .anim-pop {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .dot {
+    transition: none;
   }
 }
 </style>

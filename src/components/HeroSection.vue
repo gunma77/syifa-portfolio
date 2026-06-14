@@ -4,22 +4,22 @@
 
       <!-- Kiri: teks -->
       <div class="hero-text">
-        <p class="hero-eyebrow">Creative & Communication</p>
-        <h1 class="hero-name">
+        <p class="hero-eyebrow anim" data-delay="0">Creative & Communication</p>
+        <h1 class="hero-name anim" data-delay="1">
           Syifa Adha<br>
           <em>Khoirunnisa</em>
         </h1>
-        <p class="hero-desc">
+        <p class="hero-desc anim" data-delay="2">
           Mahasiswa Ilmu Komunikasi dengan keahlian di bidang
           Desain Grafis, Fotografi, dan Videografi — lebih dari 3 tahun pengalaman.
         </p>
-        <div class="hero-actions">
+        <div class="hero-actions anim" data-delay="3">
           <a href="#projects" class="btn-primary">Lihat Karya</a>
           <a href="#contact" class="btn-secondary">Hubungi Saya</a>
         </div>
 
         <!-- Sosial -->
-        <div class="hero-socials">
+        <div class="hero-socials anim" data-delay="4">
           <a href="https://instagram.com/ss.adha" target="_blank" title="Instagram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           </a>
@@ -29,29 +29,28 @@
           <a href="https://tiktok.com/@beautifulblurrrrr" target="_blank" title="TikTok">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3.3A4.9 4.9 0 0 1 14.8 0h-3.4v16.4a2.9 2.9 0 0 1-2.9 2.5 2.9 2.9 0 0 1-2.9-2.9 2.9 2.9 0 0 1 2.9-2.9c.3 0 .6 0 .8.1V9.6a6.3 6.3 0 0 0-.8-.1 6.3 6.3 0 0 0-6.3 6.3 6.3 6.3 0 0 0 6.3 6.3 6.3 6.3 0 0 0 6.3-6.3V8.2a8.2 8.2 0 0 0 4.9 1.6V6.5a4.9 4.9 0 0 1-3.1-3.2z"/></svg>
           </a>
-          <a>
+          <a title="Email">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
           </a>
         </div>
       </div>
 
       <!-- Kanan: foto -->
-      <div class="hero-photo-wrap">
+      <div class="hero-photo-wrap anim anim-photo" data-delay="2">
         <div class="hero-photo-bg"></div>
         <div class="hero-photo">
           <img src="/images/ssadha.jpeg" alt="Syifa Adha Khoirunnisa" />
-          <!-- Fallback kalau foto belum ada -->
           <div class="photo-fallback">SAK</div>
         </div>
         <!-- Badge floating -->
-        <div class="badge badge-top">✦ Desain Grafis</div>
-        <div class="badge badge-bottom">✦ Content Creator</div>
+        <div class="badge badge-top anim anim-badge" data-delay="4">✦ Desain Grafis</div>
+        <div class="badge badge-bottom anim anim-badge" data-delay="5">✦ Content Creator</div>
       </div>
 
     </div>
 
     <!-- Scroll hint -->
-    <div class="scroll-hint">
+    <div class="scroll-hint anim" data-delay="6">
       <span>scroll</span>
       <div class="scroll-line"></div>
     </div>
@@ -59,9 +58,68 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  // Respect prefers-reduced-motion
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced) {
+    document.querySelectorAll('.anim').forEach(el => el.classList.add('visible'))
+    return
+  }
+
+  const BASE_DELAY = 100  // ms per step
+  const elements = document.querySelectorAll('#hero .anim')
+
+  elements.forEach(el => {
+    const step = parseInt(el.dataset.delay ?? 0)
+    const delay = step * BASE_DELAY + 80 // offset kecil supaya tidak langsung
+    setTimeout(() => {
+      el.classList.add('visible')
+    }, delay)
+  })
+})
 </script>
 
 <style scoped>
+/* ─────────────────────────────────────
+   ENTRANCE ANIMATION
+───────────────────────────────────── */
+
+/* State awal: tersembunyi */
+.anim {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Foto: muncul dari kanan + scale */
+.anim-photo {
+  transform: translateX(28px) scale(0.97);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Badge: muncul dengan scale kecil */
+.anim-badge {
+  transform: scale(0.88) translateY(6px);
+  transition:
+    opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* State visible */
+.anim.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
 .hero {
   min-height: 100vh;
   display: flex;
@@ -73,7 +131,6 @@
   overflow: hidden;
 }
 
-/* Background blob dekoratif */
 .hero::before {
   content: '';
   position: absolute;
@@ -228,7 +285,6 @@
   display: block;
 }
 
-/* Fallback initials kalau foto belum ada */
 .photo-fallback {
   position: absolute;
   inset: 0;
@@ -242,7 +298,6 @@
   background: var(--pink-light);
 }
 
-/* Sembunyikan fallback kalau img berhasil load */
 .hero-photo img + .photo-fallback {
   display: none;
 }
@@ -288,6 +343,11 @@
   text-transform: uppercase;
 }
 
+/* Override: scroll-hint visible state harus tetap di tengah */
+.scroll-hint.visible {
+  transform: translateX(-50%) !important;
+}
+
 .scroll-line {
   width: 1px;
   height: 40px;
@@ -327,5 +387,12 @@
 
   .badge-top  { right: -10px; }
   .badge-bottom { left: -10px; }
+}
+
+/* Reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .anim, .anim-photo, .anim-badge {
+    transition: none;
+  }
 }
 </style>

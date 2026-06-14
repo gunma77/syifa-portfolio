@@ -1,15 +1,25 @@
 <template>
-  <section class="projects" id="projects">
+  <section class="projects" id="projects" ref="sectionRef">
     <div class="projects-inner">
 
       <!-- Header -->
-      <div class="section-header">
+      <div
+        class="section-header anim anim-up"
+        :class="{ visible: isVisible('header') }"
+        data-key="header"
+        style="--delay: 0s"
+      >
         <p class="section-eyebrow">My Work</p>
         <h2 class="section-title">Karya <em>Terbaik</em></h2>
       </div>
 
       <!-- Filter tabs -->
-      <div class="filter-tabs">
+      <div
+        class="filter-tabs anim anim-up"
+        :class="{ visible: isVisible('tabs') }"
+        data-key="tabs"
+        style="--delay: 0.1s"
+      >
         <button
           v-for="tab in tabs"
           :key="tab"
@@ -24,10 +34,12 @@
       <!-- Project grid -->
       <div class="projects-grid">
         <div
-          class="project-card"
-          v-for="p in filtered"
+          class="project-card anim anim-up"
+          :class="[{ featured: p.featured }, { visible: isVisible('card-' + p.title) }]"
+          :data-key="'card-' + p.title"
+          :style="`--delay: ${0.05 * i}s`"
+          v-for="(p, i) in filtered"
           :key="p.title"
-          :class="{ featured: p.featured }"
         >
           <!-- Gambar -->
           <div class="card-image">
@@ -52,7 +64,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+
+const sectionRef = ref(null)
+const visibleItems = ref(new Set())
+let observer = null
+
+const isVisible = (key) => visibleItems.value.has(String(key))
 
 const tabs = ['Semua', 'Desain Grafis', 'Infografis', 'Book Cover']
 const activeTab = ref('Semua')
@@ -110,9 +128,89 @@ const filtered = computed(() =>
     ? projects
     : projects.filter(p => p.category === activeTab.value)
 )
+
+// Saat tab berubah, observe ulang card-card yang baru muncul
+watch(activeTab, () => {
+  // Langsung visible karena sudah dalam viewport saat filter
+  setTimeout(() => {
+    sectionRef.value
+      ?.querySelectorAll('.project-card')
+      .forEach(el => {
+        const key = el.dataset.key
+        if (key) visibleItems.value = new Set([...visibleItems.value, key])
+      })
+  }, 50)
+})
+
+const observeCards = () => {
+  sectionRef.value
+    ?.querySelectorAll('.project-card')
+    .forEach(el => {
+      if (!el.dataset.key) return
+      // Reset dulu biar animasi ulang jika diinginkan
+      observer?.observe(el)
+    })
+}
+
+onMounted(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced) {
+    const keys = [
+      'header', 'tabs',
+      ...projects.map(p => `card-${p.title}`)
+    ]
+    visibleItems.value = new Set(keys)
+    return
+  }
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const key = entry.target.dataset.key
+          visibleItems.value = new Set([...visibleItems.value, key])
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 0.12 }
+  )
+
+  // Observe header & tabs
+  const header = sectionRef.value?.querySelector('.section-header')
+  const tabs = sectionRef.value?.querySelector('.filter-tabs')
+  if (header) observer.observe(header)
+  if (tabs) observer.observe(tabs)
+
+  // Observe cards
+  observeCards()
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
 </script>
 
 <style scoped>
+/* ─────────────────────────────────────
+   ENTRANCE ANIMATION
+───────────────────────────────────── */
+.anim-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+.anim.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
 .projects {
   padding: 7rem 2rem;
   background: var(--bg);
@@ -197,7 +295,9 @@ const filtered = computed(() =>
   border: 1px solid var(--border);
   border-radius: 20px;
   overflow: hidden;
-  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  transition:
+    transform 0.25s, box-shadow 0.25s, border-color 0.25s,
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
   display: flex;
   flex-direction: column;
 }
@@ -309,6 +409,15 @@ const filtered = computed(() =>
   .projects-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+  }
+}
+
+/* Reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .anim-up {
+    transition: none;
+    opacity: 1;
+    transform: none !important;
   }
 }
 </style>

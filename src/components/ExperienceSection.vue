@@ -1,9 +1,14 @@
 <template>
-  <section class="experience" id="experience">
+  <section class="experience" id="experience" ref="sectionRef">
     <div class="experience-inner">
 
       <!-- Header -->
-      <div class="section-header">
+      <div
+        class="section-header anim anim-up"
+        :class="{ visible: isVisible('header') }"
+        data-key="header"
+        style="--delay: 0s"
+      >
         <p class="section-eyebrow">My Experience & Skills</p>
         <h2 class="section-title">Yang Sudah Saya <em>Jalani</em></h2>
       </div>
@@ -16,8 +21,21 @@
           :key="i"
           :class="{ right: i % 2 !== 0 }"
         >
-          <div class="timeline-dot"></div>
-          <div class="timeline-card">
+          <!-- Dot -->
+          <div
+            class="timeline-dot anim anim-dot"
+            :class="{ visible: isVisible('dot-' + i) }"
+            :data-key="'dot-' + i"
+            :style="`--delay: 0.1s`"
+          ></div>
+
+          <!-- Card: kiri slide dari kanan, kanan slide dari kiri -->
+          <div
+            class="timeline-card anim"
+            :class="[i % 2 === 0 ? 'anim-left' : 'anim-right', { visible: isVisible('card-' + i) }]"
+            :data-key="'card-' + i"
+            :style="`--delay: 0.15s`"
+          >
             <span class="card-tag">{{ item.tag }}</span>
             <h3 class="card-role">{{ item.role }}</h3>
             <p class="card-org">{{ item.org }}</p>
@@ -26,8 +44,13 @@
           </div>
         </div>
 
-        <!-- Garis tengah -->
-        <div class="timeline-line"></div>
+        <!-- Garis tengah — animasi grow dari atas ke bawah -->
+        <div
+          class="timeline-line anim anim-line"
+          :class="{ visible: isVisible('line') }"
+          data-key="line"
+          style="--delay: 0.1s"
+        ></div>
       </div>
 
     </div>
@@ -35,6 +58,14 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const sectionRef = ref(null)
+const visibleItems = ref(new Set())
+let observer = null
+
+const isVisible = (key) => visibleItems.value.has(String(key))
+
 const experiences = [
   {
     tag: 'Internship',
@@ -79,9 +110,105 @@ const experiences = [
     desc: 'Pembuatan konten kreatif, penjadwalan posting, dan analisis engagement untuk berbagai klien.',
   },
 ]
+
+onMounted(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (reduced) {
+    const keys = ['header', 'line', ...experiences.flatMap((_, i) => [`dot-${i}`, `card-${i}`])]
+    visibleItems.value = new Set(keys)
+    return
+  }
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const key = entry.target.dataset.key
+          visibleItems.value = new Set([...visibleItems.value, key])
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    { threshold: 0.15 }
+  )
+
+  // Observe header
+  const header = sectionRef.value?.querySelector('.section-header')
+  if (header) observer.observe(header)
+
+  // Observe setiap card, dot, dan garis
+  sectionRef.value
+    ?.querySelectorAll('.timeline-card, .timeline-dot, .timeline-line')
+    .forEach(el => observer.observe(el))
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+})
 </script>
 
 <style scoped>
+/* ─────────────────────────────────────
+   ENTRANCE ANIMATION
+───────────────────────────────────── */
+
+/* Header: fade + slide atas */
+.anim-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Card kiri (genap): slide dari kanan */
+.anim-left {
+  opacity: 0;
+  transform: translateX(36px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Card kanan (ganjil): slide dari kiri */
+.anim-right {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+}
+
+/* Dot: scale dari nol dengan sedikit bounce */
+.anim-dot {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  transition:
+    opacity 0.4s cubic-bezier(0.34, 1.6, 0.64, 1) var(--delay, 0s),
+    transform 0.4s cubic-bezier(0.34, 1.6, 0.64, 1) var(--delay, 0s);
+}
+
+/* Garis: grow dari atas ke bawah */
+.anim-line {
+  transform-origin: top center;
+  opacity: 1;
+}
+
+/* State visible */
+.anim.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Dot visible — preserve translate */
+.anim-dot.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
 .experience {
   padding: 7rem 2rem;
   background: var(--surface);
@@ -134,10 +261,16 @@ const experiences = [
   top: 0;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
   width: 1px;
   background: var(--border);
   z-index: 0;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: top center;
+  transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+}
+
+.timeline-line.visible {
+  transform: translateX(-50%) scaleY(1);
 }
 
 .timeline-item {
@@ -177,13 +310,16 @@ const experiences = [
   padding: 1.5rem;
   width: 100%;
   max-width: 420px;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
-.timeline-card:hover {
+.timeline-card.visible:hover {
   border-color: var(--pink);
-  transform: translateY(-2px);
+  transform: translateY(-2px) !important;
   box-shadow: 0 8px 24px rgba(242, 167, 195, 0.12);
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .card-tag {
@@ -242,12 +378,36 @@ const experiences = [
     padding-left: 3rem;
   }
 
+  /* Di mobile semua card slide dari bawah saja */
+  .anim-left,
+  .anim-right {
+    transform: translateY(20px);
+  }
+
   .timeline-dot {
     left: 16px;
   }
 
   .timeline-card {
     max-width: 100%;
+  }
+}
+
+/* Reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .anim-up, .anim-left, .anim-right, .anim-dot {
+    transition: none;
+    opacity: 1;
+    transform: none !important;
+  }
+
+  .timeline-dot {
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .timeline-line {
+    transition: none;
+    transform: translateX(-50%) scaleY(1) !important;
   }
 }
 </style>
