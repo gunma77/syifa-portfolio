@@ -170,7 +170,7 @@ const contacts = [
   {
     platform: 'TikTok',
     label: '@beautifulblurrrrr',
-    href: 'https://tiktok.com/@beautifulburrrr',
+    href: 'https://www.tiktok.com/@beautifulblurrrrrr?_r=1&_t=ZS-97D4zksIS1N',
     icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3.3A4.9 4.9 0 0 1 14.8 0h-3.4v16.4a2.9 2.9 0 0 1-2.9 2.5 2.9 2.9 0 0 1-2.9-2.9 2.9 2.9 0 0 1 2.9-2.9c.3 0 .6 0 .8.1V9.6a6.3 6.3 0 0 0-.8-.1 6.3 6.3 0 0 0-6.3 6.3 6.3 6.3 0 0 0 6.3 6.3 6.3 6.3 0 0 0 6.3-6.3V8.2a8.2 8.2 0 0 0 4.9 1.6V6.5a4.9 4.9 0 0 1-3.1-3.2z"/></svg>`,
   },
   {
