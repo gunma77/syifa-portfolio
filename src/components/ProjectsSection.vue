@@ -296,8 +296,8 @@ onUnmounted(() => {
   border-radius: 20px;
   overflow: hidden;
   transition:
-    transform 0.25s, box-shadow 0.25s, border-color 0.25s,
-    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+    transform 1.25s, box-shadow 0.25s, border-color 0.25s,
+    opacity 1.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
   display: flex;
   flex-direction: column;
 }

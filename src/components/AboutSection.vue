@@ -17,15 +17,15 @@
 
       <!-- Kanan: konten -->
       <div class="about-content">
-        <p class="section-eyebrow anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.15s">A little about me</p>
-        <h2 class="section-title anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.25s">Halo, Saya <em>Syifa!</em></h2>
+        <p class="section-eyebrow anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.2s">A little about me</p>
+        <h2 class="section-title anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.35s">Halo, Saya <em>Syifa!</em></h2>
 
-        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.35s">
+        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.48s">
           Mahasiswa Ilmu Komunikasi Semester 4 di Bhakti Kencana University.
           Saya memiliki ketertarikan dan keahlian di bidang desain grafis, fotografi,
           dan videografi dengan pengalaman lebih dari <strong>3 tahun</strong>.
         </p>
-        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.42s">
+        <p class="about-bio anim anim-up" :class="{ visible: inView }" style="--up-delay: 0.48s">
           Saya mampu berkomunikasi secara efektif serta bekerja sama dalam tim
           untuk mencapai tujuan bersama. Setiap karya mencerminkan komitmen saya
           terhadap kualitas, inovasi, dan pendekatan visual yang kuat.
@@ -38,7 +38,7 @@
             :class="{ visible: inView }"
             v-for="(item, i) in info"
             :key="item.label"
-            :style="`--up-delay: ${0.5 + i * 0.08}s`"
+            :style="`--up-delay: ${0.68 + i * 0.1}s`"
           >
             <span class="info-icon" v-html="item.icon"></span>
             <div>
@@ -57,7 +57,7 @@
             target="_blank"
             class="social-pill anim anim-up"
             :class="{ visible: inView }"
-            :style="`--up-delay: ${0.7 + i * 0.07}s`"
+            :style="`--up-delay: ${0.9 + i * 0.08}s`"
           >
             <span class="social-icon" v-html="s.icon"></span>
             {{ s.label }}
@@ -153,8 +153,8 @@ const socials = [
   opacity: 0;
   transform: translateY(24px);
   transition:
-    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s);
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--up-delay, 0s);
 }
 
 /* Slide dari kiri — kolom foto */
@@ -162,8 +162,8 @@ const socials = [
   opacity: 0;
   transform: translateX(-32px) rotate(-2deg);
   transition:
-    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.05s,
-    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.05s;
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.05s,
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.05s;
 }
 
 /* Pop — dekorasi bintang & dot */
@@ -171,8 +171,8 @@ const socials = [
   opacity: 0;
   transform: scale(0.5);
   transition:
-    opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s),
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s);
+    opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s),
+    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0s);
 }
 
 /* State visible */

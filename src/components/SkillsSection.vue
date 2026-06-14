@@ -3,21 +3,20 @@
     <div class="skills-inner">
 
       <!-- Header -->
-      <div class="section-header anim anim-up" :class="{ visible: inView }" style="--delay: 0s">
+      <div class="section-header anim anim-up" style="--delay: 0s">
         <p class="section-eyebrow">What's in my tin case</p>
         <h2 class="section-title">Skills & <em>Tools</em></h2>
       </div>
 
       <!-- Soft skills -->
       <div class="skills-block">
-        <h3 class="block-label anim anim-up" :class="{ visible: inView }" style="--delay: 0.08s">Soft Skills</h3>
+        <h3 class="block-label anim anim-up" style="--delay: 0s">Soft Skills</h3>
         <div class="soft-skills">
           <div
             class="soft-card anim anim-up"
-            :class="{ visible: inView }"
             v-for="(s, i) in softSkills"
             :key="s.label"
-            :style="`--delay: ${0.14 + i * 0.09}s`"
+            style="--delay: 0s"
           >
             <span class="soft-icon" v-html="s.icon"></span>
             <p class="soft-label">{{ s.label }}</p>
@@ -28,14 +27,13 @@
 
       <!-- Tools -->
       <div class="skills-block">
-        <h3 class="block-label anim anim-up" :class="{ visible: inView }" style="--delay: 0.52s">Tools & Software</h3>
+        <h3 class="block-label anim anim-up" style="--delay: 0s">Tools & Software</h3>
         <div class="tools-grid">
           <div
             class="tool-pill anim anim-pop"
-            :class="{ visible: inView }"
             v-for="(t, i) in tools"
             :key="t.name"
-            :style="`--delay: ${0.58 + i * 0.07}s`"
+            style="--delay: 0s"
           >
             <span class="tool-icon" v-html="t.icon"></span>
             <span class="tool-name">{{ t.name }}</span>
@@ -46,14 +44,13 @@
 
       <!-- Keahlian utama -->
       <div class="skills-block">
-        <h3 class="block-label anim anim-up" :class="{ visible: inView }" style="--delay: 0.98s">Keahlian Utama</h3>
+        <h3 class="block-label anim anim-up" style="--delay: 0s">Keahlian Utama</h3>
         <div class="expertise-list">
           <div
             class="expertise-item anim anim-up"
-            :class="{ visible: inView }"
             v-for="(e, i) in expertise"
             :key="e.label"
-            :style="`--delay: ${1.05 + i * 0.08}s`"
+            style="--delay: 0s"
           >
             <span class="expertise-name">{{ e.label }}</span>
             <div class="dots">
@@ -61,8 +58,7 @@
                 v-for="n in 5"
                 :key="n"
                 class="dot"
-                :class="{ filled: inView && n <= e.dots }"
-                :style="inView ? `transition-delay: ${1.1 + i * 0.08 + n * 0.06}s` : ''"
+                :class="{ filled: n <= e.dots }"
               ></span>
             </div>
           </div>
@@ -77,27 +73,28 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const sectionRef = ref(null)
-const inView = ref(false)
 let observer = null
 
 onMounted(() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (reduced) {
-    inView.value = true
+    sectionRef.value?.querySelectorAll('.anim').forEach(el => el.classList.add('visible'))
     return
   }
 
   observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        inView.value = true
-        observer.disconnect()
-      }
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible')
+          observer.unobserve(entry.target)
+        }
+      })
     },
-    { threshold: 0.1 }
+    { threshold: 0.15 }
   )
 
-  if (sectionRef.value) observer.observe(sectionRef.value)
+  sectionRef.value?.querySelectorAll('.anim').forEach(el => observer.observe(el))
 })
 
 onUnmounted(() => {
@@ -168,32 +165,25 @@ const expertise = [
    ENTRANCE ANIMATION
 ───────────────────────────────────── */
 
-/* Slide dari bawah */
 .anim-up {
   opacity: 0;
   transform: translateY(20px);
   transition:
-    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 
-/* Pop + sedikit bounce — untuk tool pills */
 .anim-pop {
   opacity: 0;
   transform: scale(0.85) translateY(8px);
   transition:
-    opacity 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay, 0s),
-    transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay, 0s);
+    opacity 0.65s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay, 0s),
+    transform 0.65s cubic-bezier(0.34, 1.4, 0.64, 1) var(--delay, 0s);
 }
 
 .anim.visible {
   opacity: 1;
   transform: none;
-}
-
-/* Dot fill animasi */
-.dot {
-  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 /* ─────────────────────────────────────
@@ -212,7 +202,6 @@ const expertise = [
   gap: 4rem;
 }
 
-/* Header */
 .section-header {
   text-align: center;
 }
@@ -239,7 +228,6 @@ const expertise = [
   color: var(--pink-dark);
 }
 
-/* Block label */
 .block-label {
   font-size: 0.75rem;
   font-weight: 500;
@@ -273,12 +261,11 @@ const expertise = [
   padding: 1.5rem 1.25rem;
   transition:
     border-color 0.2s,
-    transform 0.2s,
-    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 
-.soft-card:hover {
+.soft-card.visible:hover {
   border-color: var(--pink);
   transform: translateY(-3px) !important;
 }
@@ -325,7 +312,6 @@ const expertise = [
   padding: 0.55rem 1.1rem;
 }
 
-/* hover override — harus setelah .anim-pop.visible biar tidak konflik */
 .tool-pill.visible:hover {
   border-color: var(--pink);
   background: var(--pink-light);
