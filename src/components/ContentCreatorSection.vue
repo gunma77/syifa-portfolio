@@ -20,6 +20,7 @@
           :class="{ active: activeTab === tab.key }"
           @click="activeTab = tab.key"
         >
+          <span class="tab-icon" v-html="tab.icon"></span>
           {{ tab.label }}
         </button>
       </div>
@@ -31,7 +32,7 @@
             <div class="phone-screen">
               <img :src="acc.img" :alt="acc.handle" />
               <div class="phone-fallback">
-                <span>{{ acc.emoji }}</span>
+                <span class="fallback-icon" v-html="acc.icon"></span>
                 <p>{{ acc.handle }}</p>
               </div>
             </div>
@@ -55,7 +56,12 @@
               playsinline
               preload="metadata"
             ></video>
-            <div class="play-btn" :class="{ hidden: isPlaying }">▶</div>
+            <div class="play-btn" :class="{ hidden: isPlaying }">
+              <!-- SVG Play icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+                <path d="M8 5v14l11-7L8 5z"/>
+              </svg>
+            </div>
           </div>
           <div class="video-info">
             <span class="card-tag">Videographer & Editor</span>
@@ -80,7 +86,12 @@
           <div class="vphone" v-for="(v, i) in videoClips" :key="i">
             <div class="vphone-screen">
               <img :src="v.img" :alt="v.caption" />
-              <div class="vphone-fallback">🎥</div>
+              <div class="vphone-fallback">
+                <!-- SVG kamera video -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+                  <path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/>
+                </svg>
+              </div>
               <div class="vphone-overlay">
                 <p>{{ v.caption }}</p>
               </div>
@@ -97,8 +108,22 @@
 import { ref } from 'vue'
 
 const tabs = [
-  { key: 'creator', label: '📱 Content Creator' },
-  { key: 'video',   label: '🎬 Videographer & Editor' },
+  {
+    key: 'creator',
+    label: 'Content Creator',
+    // SVG smartphone
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+      <path d="M17 1H7C5.9 1 5 1.9 5 3v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm-5 20c-.83 0-1.5-.67-1.5-1.5S11.17 18 12 18s1.5.67 1.5 1.5S12.83 21 12 21zm5-4H7V4h10v13z"/>
+    </svg>`,
+  },
+  {
+    key: 'video',
+    label: 'Videographer & Editor',
+    // SVG clapperboard / film
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+      <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+    </svg>`,
+  },
 ]
 const activeTab = ref('creator')
 const videoEl = ref(null)
@@ -117,21 +142,30 @@ function togglePlay() {
 
 const accounts = [
   {
-    emoji: '🎓',
+    // SVG graduation cap
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+      <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+    </svg>`,
     img: '/images/ilkomBKU.jpeg',
     handle: '@ilmukomunikasi.bku',
     platform: 'TikTok — Prodi Ilmu Komunikasi',
     desc: 'Konten edukasi dan dokumentasi kegiatan akademik program studi Ilmu Komunikasi BKU.',
   },
   {
-    emoji: '✨',
+    // SVG sparkle / bintang
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+      <path d="M12 1l2.39 7.26H22l-6.19 4.5 2.35 7.24L12 15.9l-6.16 4.1 2.35-7.24L2 8.26h7.61L12 1z"/>
+    </svg>`,
     img: '/images/sympnoia.jpeg',
     handle: '@sympnoia',
     platform: 'TikTok IPA 5',
     desc: 'Konten kreatif dengan total views 277K+ di video terpopuler. Kolaborasi dan cerita kehidupan.',
   },
   {
-    emoji: '🏫',
+    // SVG school / gedung
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+      <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 11-6-11-6z"/>
+    </svg>`,
     img: '/images/fa1ilkom.jpeg',
     handle: '@asavatraa',
     platform: 'TikTok FA1 ILKOM',
@@ -145,11 +179,7 @@ const stats = [
   { num: '2024', label: 'Tahun Aktif' },
 ]
 
-const videoClips = [
-  { img: '/images/gesit1.jpeg', caption: '"Hidup selain ngajarin kita..."' },
-  { img: '/images/gesit2.jpeg', caption: '"Soalnya kita volunteeran bareng!!"' },
-  { img: '/images/gesit3.jpeg', caption: 'Energi positif dari senyuman anak-anak' },
-]
+const videoClips = []
 </script>
 
 <style scoped>
@@ -209,6 +239,9 @@ const videoClips = [
 }
 
 .tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 0.85rem;
   font-weight: 400;
   padding: 0.55rem 1.4rem;
@@ -231,6 +264,20 @@ const videoClips = [
   border-color: var(--pink);
   color: #fff;
   font-weight: 500;
+}
+
+.tab-icon {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.tab-btn.active .tab-icon svg {
+  fill: #fff;
+}
+
+.tab-btn:not(.active) .tab-icon svg {
+  fill: currentColor;
 }
 
 /* ── Phone showcase (Content Creator) ── */
@@ -282,8 +329,23 @@ const videoClips = [
   background: var(--pink-light);
 }
 
-.phone-fallback span { font-size: 2.5rem; }
-.phone-fallback p { font-size: 0.75rem; color: var(--pink-dark); text-align: center; padding: 0 0.5rem; }
+.fallback-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pink-dark);
+}
+
+.fallback-icon svg {
+  fill: var(--pink-dark);
+}
+
+.phone-fallback p {
+  font-size: 0.75rem;
+  color: var(--pink-dark);
+  text-align: center;
+  padding: 0 0.5rem;
+}
 
 .phone-screen img + .phone-fallback { display: none; }
 
@@ -363,8 +425,8 @@ const videoClips = [
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4rem;
   background: var(--pink-light);
+  color: var(--pink-dark);
 }
 
 .video-thumb img + .video-fallback { display: none; }
@@ -375,7 +437,6 @@ const videoClips = [
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
   color: #fff;
   background: rgba(0,0,0,0.25);
   transition: opacity 0.3s;
@@ -484,8 +545,12 @@ const videoClips = [
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
   background: var(--pink-light);
+  color: var(--pink-dark);
+}
+
+.vphone-fallback svg {
+  fill: var(--pink-dark);
 }
 
 .vphone-screen img + .vphone-fallback { display: none; }

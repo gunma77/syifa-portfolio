@@ -31,7 +31,14 @@
       <!-- Kanan: form -->
       <div class="contact-right">
         <div class="form-card">
-          <h3 class="form-title">Kirim Pesan ✉️</h3>
+          <h3 class="form-title">
+            Kirim Pesan
+            <!-- SVG envelope -->
+            <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M2 7l10 7 10-7"/>
+            </svg>
+          </h3>
 
           <div class="form-group">
             <label>Nama</label>
@@ -47,13 +54,15 @@
           </div>
           <div class="form-group">
             <label>Pesan</label>
-            <textarea v-model="form.message" rows="4" placeholder="Ceritakan projekmu..."></textarea>
+            <textarea v-model="form.message" rows="4" placeholder="Tulis pesanmu..."></textarea>
           </div>
 
           <button class="btn-send" @click="sendEmail" :disabled="!isValid || sending">
             <span v-if="sending">Mengirim...</span>
-            <span v-else-if="sent">Terkirim! 🎉</span>
-            <span v-else>Kirim Pesan </span>
+            <span v-else-if="sent" class="sent-state">
+              Terkirim!
+            </span>
+            <span v-else>Kirim Pesan</span>
           </button>
           <p v-if="error" class="error-msg">Gagal mengirim, coba lagi ya.</p>
         </div>
@@ -117,7 +126,6 @@ const contacts = [
   {
     platform: 'Email',
     label: 'adhasyifa53@gmail.com',
-    href: 'mailto:adhasyifa53@gmail.com',
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>`,
   },
   {
@@ -128,7 +136,7 @@ const contacts = [
   },
   {
     platform: 'TikTok',
-    label: '@beautifulburrrr',
+    label: '@beautifulblurrrrr',
     href: 'https://tiktok.com/@beautifulburrrr',
     icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3.3A4.9 4.9 0 0 1 14.8 0h-3.4v16.4a2.9 2.9 0 0 1-2.9 2.5 2.9 2.9 0 0 1-2.9-2.9 2.9 2.9 0 0 1 2.9-2.9c.3 0 .6 0 .8.1V9.6a6.3 6.3 0 0 0-.8-.1 6.3 6.3 0 0 0-6.3 6.3 6.3 6.3 0 0 0 6.3 6.3 6.3 6.3 0 0 0 6.3-6.3V8.2a8.2 8.2 0 0 0 4.9 1.6V6.5a4.9 4.9 0 0 1-3.1-3.2z"/></svg>`,
   },
@@ -280,6 +288,16 @@ const contacts = [
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.title-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--pink-dark);
+  flex-shrink: 0;
 }
 
 .form-group {
@@ -342,6 +360,16 @@ const contacts = [
 .btn-send:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.sent-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sent-state svg {
+  fill: #fff;
 }
 
 .error-msg {

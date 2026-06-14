@@ -54,7 +54,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const tabs = ['Semua', 'Desain Grafis', 'Infografis', 'Videografi', 'Book Cover']
+const tabs = ['Semua', 'Desain Grafis', 'Infografis', 'Book Cover']
 const activeTab = ref('Semua')
 
 const projects = [
