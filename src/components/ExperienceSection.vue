@@ -69,6 +69,14 @@ const isVisible = (key) => visibleItems.value.has(String(key))
 const experiences = [
   {
     tag: 'Internship',
+    role: 'Staff Divisi Creative Production ',
+    org: 'KOMINFO',
+    period: '2026 – 2027',
+    desc: 'Membuat visual feeds media sosial, merancang company profile, serta memproduksi aset kreatif visual untuk kebutuhan publikasi dan komunikasi digital.',
+  },
+
+  {
+    tag: 'Internship',
     role: 'Social Media Intern',
     org: 'Communication Science Study Program — Bhakti Kencana University',
     period: '2025 – 2026',
@@ -108,6 +116,14 @@ const experiences = [
     org: 'Berbagai Klien',
     period: '2023 – sekarang',
     desc: 'Pembuatan konten kreatif, penjadwalan posting, dan analisis engagement untuk berbagai klien.',
+  },
+
+  {
+    tag: 'Freelance',
+    role: 'Creative Director',
+    org: 'Serene Soul Event Organizer',
+    period: '2026',
+    desc: 'Merancang visi kreatif, mengembangkan ide-ide inovatif, serta memastikan seluruh elemen visual dan komunikasi dalam proyek, acara, atau kampanye berjalan secara konsisten.',
   },
 ]
 

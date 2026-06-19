@@ -64,50 +64,81 @@
 
       <!-- Videographer -->
       <div v-if="activeTab === 'video'" class="video-showcase">
-        <div class="video-hero">
+
+        <!-- Daftar video (hanya tampil sesuai visibleVideos) -->
+        <div
+          v-for="(video, i) in visibleVideos"
+          :key="i"
+          class="video-hero anim anim-up"
+          :class="{ visible: isVisible('video-block-' + i) }"
+          :data-key="'video-block-' + i"
+          :style="`--delay: ${0.08 * i}s`"
+        >
+          <!-- YouTube: klik buka tab baru -->
+          <a
+            v-if="video.type === 'youtube'"
+            class="video-thumb video-thumb--yt anim anim-scale"
+            :class="{ visible: isVisible('video-thumb-' + i) }"
+            :data-key="'video-thumb-' + i"
+            :style="`--delay: ${0.05 * i}s`"
+            :href="`https://www.youtube.com/watch?v=${video.youtubeId}`"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              :src="`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`"
+              :alt="video.title"
+            />
+            <div class="play-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+                <path fill="#FF0000" d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C6.8 19 12 19 12 19s4.2 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8z"/>
+                <path fill="#fff" d="M10 15l5.2-3L10 9v6z"/>
+              </svg>
+            </div>
+            <span class="yt-badge">YouTube</span>
+          </a>
+
+          <!-- Cloudinary / file lokal: play di halaman -->
           <div
+            v-else
             class="video-thumb anim anim-scale"
-            :class="{ visible: isVisible('video-thumb') }"
-            data-key="video-thumb"
-            style="--delay: 0s"
-            @click="togglePlay"
-            ref="videoWrap"
+            :class="{ visible: isVisible('video-thumb-' + i) }"
+            :data-key="'video-thumb-' + i"
+            :style="`--delay: ${0.05 * i}s`"
+            @click="togglePlayAt(i)"
           >
             <video
-              ref="videoEl"
-              src="/videos/gesit.mp4"
+              :ref="el => { if (el) videoRefs[i] = el }"
+              :src="video.src"
               loop
               playsinline
-              preload="metadata"
+              preload="none"
             ></video>
-            <div class="play-btn" :class="{ hidden: isPlaying }">
+            <div class="play-btn" :class="{ hidden: playingIndex === i }">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
                 <path d="M8 5v14l11-7L8 5z"/>
               </svg>
             </div>
           </div>
 
+          <!-- Info -->
           <div
             class="video-info anim anim-left"
-            :class="{ visible: isVisible('video-info') }"
-            data-key="video-info"
-            style="--delay: 0.1s"
+            :class="{ visible: isVisible('video-info-' + i) }"
+            :data-key="'video-info-' + i"
+            :style="`--delay: ${0.1 + 0.05 * i}s`"
           >
             <span class="card-tag">Videographer & Editor</span>
-            <h3 class="video-title">Relawan Gesit Bandung</h3>
-            <p class="video-org">Kitabisa × Salam Setara × Relawan Gesit</p>
-            <p class="video-desc">
-              Merekam dan mengedit konten video kegiatan sosial relawan di Bandung.
-              Video dipublikasikan di Instagram <strong>@gesit_kotabandung</strong> dan
-              mengabadikan momen inspiratif bersama anak-anak serta komunitas.
-            </p>
+            <h3 class="video-title">{{ video.title }}</h3>
+            <p class="video-org">{{ video.org }}</p>
+            <p class="video-desc" v-html="video.desc"></p>
             <div class="video-stats">
               <div
                 class="stat anim anim-up"
-                :class="{ visible: isVisible('stat-' + s.label) }"
-                :data-key="'stat-' + s.label"
+                :class="{ visible: isVisible(`stat-${i}-${s.label}`) }"
+                :data-key="`stat-${i}-${s.label}`"
                 :style="`--delay: ${0.2 + 0.08 * si}s`"
-                v-for="(s, si) in stats"
+                v-for="(s, si) in video.stats"
                 :key="s.label"
               >
                 <p class="stat-num">{{ s.num }}</p>
@@ -117,29 +148,27 @@
           </div>
         </div>
 
-        <!-- Phone mockup tambahan -->
-        <div class="video-phones">
-          <div
-            class="vphone anim anim-up"
-            :class="{ visible: isVisible('vphone-' + i) }"
-            :data-key="'vphone-' + i"
-            :style="`--delay: ${0.08 * i}s`"
-            v-for="(v, i) in videoClips"
-            :key="i"
-          >
-            <div class="vphone-screen">
-              <img :src="v.img" :alt="v.caption" />
-              <div class="vphone-fallback">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
-                  <path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/>
-                </svg>
-              </div>
-              <div class="vphone-overlay">
-                <p>{{ v.caption }}</p>
-              </div>
-            </div>
-          </div>
+        <!-- Tombol Tampilkan Lebih Banyak / Lebih Sedikit -->
+        <div v-if="videos.length > INITIAL_SHOW" class="show-more-wrap">
+          <!-- Gradient fade sebelum tombol (hanya saat collapsed) -->
+          <div v-if="!showAll" class="show-more-fade"></div>
+          <button class="show-more-btn" @click="toggleShowAll">
+            <span v-if="!showAll">
+              Tampilkan lebih banyak
+              <span class="show-more-count">({{ videos.length - INITIAL_SHOW }} video lainnya)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            </span>
+            <span v-else>
+              Tampilkan lebih sedikit
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                <path d="M7 14l5-5 5 5z"/>
+              </svg>
+            </span>
+          </button>
         </div>
+
       </div>
 
     </div>
@@ -147,7 +176,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 
 const sectionRef = ref(null)
 const visibleItems = ref(new Set())
@@ -159,15 +188,9 @@ const markVisible = (key) => {
   visibleItems.value = new Set([...visibleItems.value, key])
 }
 
-const observeEl = (el) => {
-  if (el && el.dataset.key) observer?.observe(el)
-}
-
-// Re-observe elemen setelah tab switch
 const observeAll = () => {
   if (!sectionRef.value || !observer) return
   sectionRef.value.querySelectorAll('[data-key]').forEach(el => {
-    // Kalau sudah visible, skip
     if (!visibleItems.value.has(el.dataset.key)) {
       observer.observe(el)
     }
@@ -192,20 +215,47 @@ const tabs = [
 ]
 
 const activeTab = ref('creator')
-const videoEl = ref(null)
-const isPlaying = ref(false)
 
-function togglePlay() {
-  if (!videoEl.value) return
-  if (isPlaying.value) {
-    videoEl.value.pause()
-    isPlaying.value = false
+// ── Show more ────────────────────────────────────────────
+const INITIAL_SHOW = 2
+const showAll = ref(false)
+
+const visibleVideos = computed(() =>
+  showAll.value ? videos.value : videos.value.slice(0, INITIAL_SHOW)
+)
+
+async function toggleShowAll() {
+  if (showAll.value) {
+    // Collapse: scroll balik ke atas section video
+    showAll.value = false
+    await nextTick()
+    const el = sectionRef.value?.querySelector('.video-showcase')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   } else {
-    videoEl.value.play()
-    isPlaying.value = true
+    showAll.value = true
+    await nextTick()
+    observeAll()
   }
 }
 
+// ── Video state ──────────────────────────────────────────
+const videoRefs = ref([])
+const playingIndex = ref(null)
+
+function togglePlayAt(i) {
+  const el = videoRefs.value[i]
+  if (!el) return
+  if (playingIndex.value === i) {
+    el.pause()
+    playingIndex.value = null
+  } else {
+    videoRefs.value.forEach((v, idx) => { if (v && idx !== i) v.pause() })
+    el.play()
+    playingIndex.value = i
+  }
+}
+
+// ── Data ─────────────────────────────────────────────────
 const accounts = [
   {
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
@@ -236,29 +286,119 @@ const accounts = [
   },
 ]
 
-const stats = [
-  { num: '3+',   label: 'Video Diproduksi' },
-  { num: '100+', label: 'Total Views' },
-  { num: '2024', label: 'Tahun Aktif' },
-]
+// ── Tambah / edit video di sini ──────────────────────────
+const videos = ref([
+  {
+    src: '/public/videos/gesit.mp4',
+    title: 'Relawan Gesit Bandung',
+    org: 'Kitabisa × Salam Setara × Relawan Gesit',
+    desc: 'Merekam dan mengedit konten video kegiatan sosial relawan di Bandung. Video dipublikasikan di Instagram <strong>@gesit_kotabandung</strong> dan mengabadikan momen inspiratif bersama anak-anak serta komunitas.',
+    stats: [
+      { num: '3+',   label: 'Video Diproduksi' },
+      { num: '100+', label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+  {
+    src: 'https://res.cloudinary.com/ds5nnop3u/video/upload/q_auto,f_auto/v1781837877/cbsaui_e6h7q6.mp4',
+    title: 'Judul Video',
+    org: 'Nama Organisasi',
+    desc: 'Deskripsi video.',
+    stats: [
+      { num: '1+',   label: 'Video Diproduksi' },
+      { num: '50+',  label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+  {
+    src: 'https://res.cloudinary.com/ds5nnop3u/video/upload/q_auto,f_auto/v1781837931/ilkomBku_zdsvy4.mp4',
+    title: 'Judul Video',
+    org: 'Nama Organisasi',
+    desc: 'Deskripsi video.',
+    stats: [
+      { num: '1+',   label: 'Video Diproduksi' },
+      { num: '50+',  label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+  {
+    src: 'https://res.cloudinary.com/ds5nnop3u/video/upload/q_auto,f_auto/v1781837906/muftifauzi_vaz5tq.mp4',
+    title: 'Judul Video',
+    org: 'Nama Organisasi',
+    desc: 'Deskripsi video.',
+    stats: [
+      { num: '1+',   label: 'Video Diproduksi' },
+      { num: '50+',  label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+  {
+    src: 'https://res.cloudinary.com/ds5nnop3u/video/upload/q_auto,f_auto/v1781837912/nunaeni_gba7wt.mp4',
+    title: 'Judul Video',
+    org: 'Nama Organisasi',
+    desc: 'Deskripsi video.',
+    stats: [
+      { num: '1+',   label: 'Video Diproduksi' },
+      { num: '50+',  label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+  {
+    src: 'https://res.cloudinary.com/ds5nnop3u/video/upload/q_auto,f_auto/v1781838018/akademikBku_agm5d7.mp4',
+    title: 'Judul Video',
+    org: 'Nama Organisasi',
+    desc: 'Deskripsi video.',
+    stats: [
+      { num: '1+',   label: 'Video Diproduksi' },
+      { num: '50+',  label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+  // ── YouTube videos ───────────────────────────────────────
+  {
+    type: 'youtube',
+    youtubeId: 'dJrjbMA25KI',
+    title: 'Judul Video YouTube 1',
+    org: 'Nama Organisasi',
+    desc: 'Deskripsi video YouTube pertama.',
+    stats: [
+      { num: '1+',   label: 'Video Diproduksi' },
+      { num: '50+',  label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+  {
+    type: 'youtube',
+    youtubeId: 'FRapHwBRnFs',
+    title: 'Judul Video YouTube 2',
+    org: 'Nama Organisasi',
+    desc: 'Deskripsi video YouTube kedua.',
+    stats: [
+      { num: '1+',   label: 'Video Diproduksi' },
+      { num: '50+',  label: 'Total Views' },
+      { num: '2024', label: 'Tahun Aktif' },
+    ],
+  },
+])
 
-const videoClips = []
-
-// Setelah ganti tab, observe elemen-elemen baru di DOM
+// ── Intersection Observer ────────────────────────────────
 watch(activeTab, () => {
+  showAll.value = false
   setTimeout(observeAll, 50)
 })
 
 onMounted(() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (reduced) {
-    // Tandai semua visible langsung
     const allKeys = [
       'header', 'tabs',
       ...accounts.map((_, i) => `phone-${i}`),
-      'video-thumb', 'video-info',
-      ...stats.map(s => `stat-${s.label}`),
-      ...videoClips.map((_, i) => `vphone-${i}`),
+      ...videos.value.flatMap((v, i) => [
+        `video-block-${i}`,
+        `video-thumb-${i}`,
+        `video-info-${i}`,
+        ...v.stats.map(s => `stat-${i}-${s.label}`),
+      ]),
     ]
     visibleItems.value = new Set(allKeys)
     return
@@ -276,7 +416,6 @@ onMounted(() => {
     { threshold: 0.12 }
   )
 
-  // Observe semua elemen yang ada data-key di DOM awal
   observeAll()
 })
 
@@ -289,8 +428,6 @@ onUnmounted(() => {
 /* ─────────────────────────────────────
    ENTRANCE ANIMATIONS
 ───────────────────────────────────── */
-
-/* Fade + slide atas (default) */
 .anim-up {
   opacity: 0;
   transform: translateY(24px);
@@ -299,7 +436,6 @@ onUnmounted(() => {
     transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 
-/* Fade + slide dari kiri (untuk video-info) */
 .anim-left {
   opacity: 0;
   transform: translateX(-28px);
@@ -308,7 +444,6 @@ onUnmounted(() => {
     transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 
-/* Fade + scale kecil (untuk video thumb) */
 .anim-scale {
   opacity: 0;
   transform: scale(0.92);
@@ -317,7 +452,6 @@ onUnmounted(() => {
     transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 
-/* State visible — semua kembali ke normal */
 .anim.visible {
   opacity: 1;
   transform: none;
@@ -475,7 +609,6 @@ onUnmounted(() => {
 }
 
 .fallback-icon svg { fill: var(--pink-dark); }
-
 .phone-fallback p {
   font-size: 0.75rem;
   color: var(--pink-dark);
@@ -512,13 +645,21 @@ onUnmounted(() => {
 .video-showcase {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 0;
+  position: relative;
 }
 
+/* Setiap blok video */
 .video-hero {
   display: flex;
   gap: 3rem;
   align-items: flex-start;
+  padding: 3rem 0;
+}
+
+/* Separator antar video */
+.video-hero + .video-hero {
+  border-top: 1px solid var(--border);
 }
 
 .video-thumb {
@@ -615,54 +756,84 @@ onUnmounted(() => {
   color: var(--text-muted);
 }
 
-/* Video phones row */
-.video-phones {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
+/* ── YouTube thumbnail ── */
+.video-thumb--yt {
+  display: block;
+  text-decoration: none;
 }
 
-.vphone { width: 160px; flex-shrink: 0; }
-
-.vphone-screen {
-  border-radius: 16px;
-  overflow: hidden;
-  aspect-ratio: 9 / 16;
-  background: var(--pink-light);
-  position: relative;
-}
-
-.vphone-screen img {
+.video-thumb--yt img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.vphone-fallback {
+.yt-badge {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--pink-light);
-  color: var(--pink-dark);
-}
-
-.vphone-fallback svg { fill: var(--pink-dark); }
-.vphone-screen img + .vphone-fallback { display: none; }
-
-.vphone-overlay {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-  padding: 1rem 0.75rem 0.6rem;
-}
-
-.vphone-overlay p {
-  font-size: 0.68rem;
+  top: 0.6rem;
+  left: 0.6rem;
+  background: #FF0000;
   color: #fff;
-  line-height: 1.4;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.video-thumb--yt:hover .play-btn { opacity: 0.85; }
+
+/* ── Show More ── */
+.show-more-wrap {
+  position: relative;
+  text-align: center;
+  padding-top: 1rem;
+}
+
+/* Gradient fade di atas tombol saat collapsed */
+.show-more-fade {
+  position: absolute;
+  top: -80px;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--surface));
+  pointer-events: none;
+}
+
+.show-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.65rem 1.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  margin-top: 1rem;
+}
+
+.show-more-btn:hover {
+  border-color: var(--pink);
+  color: var(--pink-dark);
+  background: var(--pink-light);
+}
+
+.show-more-btn svg {
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.show-more-count {
+  color: var(--pink-dark);
+  font-weight: 600;
 }
 
 /* ── Responsive ── */
@@ -674,11 +845,10 @@ onUnmounted(() => {
   .video-hero {
     flex-direction: column;
     gap: 2rem;
+    padding: 2.5rem 0;
   }
 
   .video-thumb { width: 100%; }
-  .video-phones { gap: 1rem; }
-  .vphone { width: 120px; }
 }
 
 /* Reduce motion fallback */

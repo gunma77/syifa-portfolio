@@ -121,6 +121,66 @@ const projects = [
     tags: ['Social Media', 'Feed Design', 'Branding'],
     featured: false,
   },
+
+  {
+    emoji: '📱',
+    img: '/images/rebuildPalestine.jpeg',
+    title: 'Rebuild Palestine',
+    category: 'Desain Grafis',
+    desc: 'Poster ilustrasi digital bertema solidaritas Palestina. Dibuat sebagai karya visual kreatif untuk kampanye kemanusiaan Rebuild Palestine.',
+    tags: ['Desain Grafis', 'Ilustrasi Digital'],
+    featured: false,
+  },
+
+  {
+  emoji: '🧠',
+  img: '/images/pengaruhMedsos.jpeg',
+  title: 'Pengaruh Media Sosial Bagi Kesehatan Mental',
+  category: 'Infografis',
+  desc: 'Infografis edukatif tentang dampak negatif media sosial terhadap kesehatan mental remaja.',
+  tags: ['Infografis', 'Kesehatan Mental', 'Kampanye Sosial'],
+  featured: false,
+},
+
+  {
+    emoji: '📱',
+    img: '/images/alice.jpeg',
+    title: 'Design Feeds — BEM FSOS',
+    category: 'Desain Grafis',
+    desc: 'Desain feed Instagram untuk BEM FSOS mencakup konten hari besar nasional, Kartini Modern, Idul Fitri, dan kampanye sosial.',
+    tags: ['Social Media', 'Feed Design', 'Branding'],
+    featured: false,
+  },
+
+  {
+  emoji: '🎭',
+  img: '/images/sekalaNiskala.jpeg',
+  title: 'Poster Teater — Sekala Niskala',
+  category: 'Desain Grafis',
+  desc: 'Desain poster untuk pertunjukan teater "Sekala Niskala" oleh 12 IPA 5.',
+  tags: ['Poster', 'Teater', 'Tipografi'],
+  featured: false,
+  },
+
+  {
+  emoji: '🧘',
+  img: '/images/sereneSoul.jpeg',
+  title: 'Poster Promosi — Serene Soul',
+  category: 'Desain Grafis',
+  desc: 'Desain konten promosi untuk acara wellness "Serene Soul", sebuah sesi yoga yang bertujuan membantu peserta merilekskan tubuh, menenangkan pikiran, dan memulihkan energi.',
+  tags: ['Social Media', 'Event', 'Wellness'],
+  featured: false,
+},
+
+  {
+  emoji: '🦐',
+  img: '/images/udang.jpeg',
+  title: 'Logo KKN — Desa Gebang Mekar',
+  category: 'Desain Logo',
+  desc: 'Desain logo untuk KKN Kelompok 3 di Desa Gebang Mekar tahun 2026.',
+  tags: ['Logo', 'KKN', 'Ilustrasi'],
+  featured: false,
+},
 ]
 
 const filtered = computed(() =>
