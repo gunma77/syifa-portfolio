@@ -176,7 +176,7 @@ const projects = [
   emoji: '🦐',
   img: '/images/udang.jpeg',
   title: 'Logo KKN — Desa Gebang Mekar',
-  category: 'Desain Logo',
+  category: 'Desain Grafis',
   desc: 'Desain logo untuk KKN Kelompok 3 di Desa Gebang Mekar tahun 2026.',
   tags: ['Logo', 'KKN', 'Ilustrasi'],
   featured: false,
