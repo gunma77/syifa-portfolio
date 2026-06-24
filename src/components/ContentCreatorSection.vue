@@ -289,7 +289,7 @@ const accounts = [
 // ── Tambah / edit video di sini ──────────────────────────
 const videos = ref([
   {
-    src: '/public/videos/gesit.mp4',
+    src: 'https://res.cloudinary.com/ds5nnop3u/video/upload/q_auto,f_auto/v1781837877/gesit_rkpfrn.mp4',
     title: 'Relawan Gesit Bandung',
     tag: 'Content Creator',
     org: 'GESIT Bandung',
