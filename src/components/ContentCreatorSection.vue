@@ -110,9 +110,10 @@
             <video
               :ref="el => { if (el) videoRefs[i] = el }"
               :src="video.src"
+              :poster="video.poster"
               loop
               playsinline
-              preload="none"
+              preload="metadata"
             ></video>
             <div class="play-btn" :class="{ hidden: playingIndex === i }">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
@@ -294,6 +295,7 @@ const videos = ref([
     tag: 'Content Creator',
     org: 'GESIT Bandung',
     desc: 'Merancang konsep dan memproduksi konten dokumentasi kegiatan Dukungan Psikososial di Cisarua. Bertanggung jawab dalam pengambilan konten, penyusunan narasi visual, serta pembuatan materi publikasi yang mampu menggambarkan dampak dan tujuan kegiatan kepada masyarakat.',
+    poster: 'https://res.cloudinary.com/ds5nnop3u/video/upload/so_0,f_jpg/v1782318433/gesit_rkpfrn.jpg',
     stats: [
       { num: '3+',   label: 'Video Diproduksi' },
       { num: '3000+', label: 'Total Views' },
@@ -306,6 +308,7 @@ const videos = ref([
     tag: 'Creative Video Editor',
     org: 'CBSA UI',
     desc: 'Meningkatkan kualitas konten melalui creative editing, termasuk penambahan sound effects, motion text, dan transisi yang mendukung storytelling. Mengubah materi dokumentasi menjadi video yang informatif, engaging, dan mudah dipahami oleh audiens. ',
+    poster: 'https://res.cloudinary.com/ds5nnop3u/video/upload/so_0,f_jpg/v1781837877/cbsaui_e6h7q6.jpg',
     stats: [
       { num: '2',   label: 'Video Diproduksi' },
       { num: '6500+',  label: 'Total Views' },
@@ -318,6 +321,7 @@ const videos = ref([
     tag: 'Content Creator Intern',
     org: 'Program Studi Ilmu Komunikasi Universitas Bhakti Kencana',
     desc: 'Melaksanakan kegiatan magang sebagai bagian dari tim kreatif program studi dengan tugas merancang ide konten, membuat materi publikasi digital, serta mendukung pengelolaan media sosial untuk meningkatkan engagement dan penyebaran informasi akademik.',
+    poster: 'https://res.cloudinary.com/ds5nnop3u/video/upload/so_0,f_jpg/v1781837931/ilkomBku_zdsvy4.jpg',
     stats: [
       { num: '1',   label: 'Video Diproduksi' },
       { num: '1000+',  label: 'Total Views' },
@@ -330,6 +334,7 @@ const videos = ref([
     tag: 'Teaching Assistant & Content Documentation',
     org: 'Universitas Bhakti Kencana',
     desc: 'Mendukung pelaksanaan kegiatan akademik sebagai asisten dosen sekaligus bertanggung jawab atas dokumentasi kegiatan. Mengelola proses pengambilan gambar, penyusunan konsep video, editing, hingga publikasi konten untuk kebutuhan dokumentasi dan promosi kegiatan akademik.',
+    poster: 'https://res.cloudinary.com/ds5nnop3u/video/upload/so_0,f_jpg/v1781837906/muftifauzi_vaz5tq.jpg',
     stats: [
       { num: '1',   label: 'Video Diproduksi' },
       { num: '850+',  label: 'Total Views' },
@@ -342,6 +347,7 @@ const videos = ref([
     tag: 'Video Editor',
     org: 'Universitas Bhakti Kencana',
     desc: 'Mengedit video pembelajaran untuk Mata Kuliah Wajib Kurikulum Universitas (MKWU) Agama dengan fokus pada penyajian materi yang informatif, sistematis, dan menarik. Melakukan pengolahan visual, audio, serta elemen grafis untuk mendukung efektivitas penyampaian materi.',
+    poster: 'https://res.cloudinary.com/ds5nnop3u/video/upload/so_0,f_jpg/v1781837912/nunaeni_gba7wt.jpg',
     stats: [
       { num: '1',   label: 'Video Diproduksi' },
       { num: '1000+',  label: 'Total Views' },
@@ -354,6 +360,7 @@ const videos = ref([
     tag: 'Video Editor',
     org: 'PKM Internasional & Visit Campus Malaysia 2026',
     desc: 'Bertanggung jawab dalam proses editing video dokumentasi kegiatan Pengabdian Kepada Masyarakat (PKM) Internasional dan Visit Campus Malaysia. Mengemas dokumentasi kegiatan menjadi video yang profesional untuk kebutuhan publikasi institusi dan pelaporan program.',
+    poster: 'https://res.cloudinary.com/ds5nnop3u/video/upload/so_0,f_jpg/v1781838018/akademikBku_agm5d7.jpg',
     stats: [
       { num: '1',   label: 'Video Diproduksi' },
       { num: '3500+',  label: 'Total Views' },
